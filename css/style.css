@@ -1,0 +1,422 @@
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+    }
+
+    #fps-indicator {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      min-width: 74px;
+      padding: 7px 10px;
+      border: 1px solid rgba(10, 207, 131, 0.28);
+      border-radius: 8px;
+      background: rgba(22, 33, 62, 0.78);
+      color: #7dffc9;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      letter-spacing: 0.2px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 0 16px rgba(10, 207, 131, 0.12);
+      pointer-events: none;
+      user-select: none;
+      z-index: 1002;
+    }
+
+    #fps-indicator[hidden] {
+      display: none;
+    }
+
+    /* ===== Кнопка-шестерёнка ===== */
+    #settings-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(22, 33, 62, 0.8);
+      color: #0acf83;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 1002;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s ease, background 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      user-select: none;
+    }
+
+    #settings-toggle:hover {
+      transform: rotate(60deg) scale(1.1);
+      background: rgba(22, 33, 62, 0.95);
+      box-shadow: 0 0 20px rgba(10, 207, 131, 0.3);
+    }
+
+    /* ===== Оверлей ===== */
+    #settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #settings-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ===== Панель настроек ===== */
+    #settings-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 100vh;
+      background: rgba(22, 33, 62, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1001;
+      padding: 24px;
+      overflow-y: auto;
+      color: #fff;
+    }
+
+    #settings-panel.open {
+      transform: translateX(0);
+    }
+
+    /* Скроллбар панели */
+    #settings-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #settings-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #settings-panel::-webkit-scrollbar-thumb {
+      background: rgba(10, 207, 131, 0.3);
+      border-radius: 2px;
+    }
+
+    #settings-panel::-webkit-scrollbar-thumb:hover {
+      background: rgba(10, 207, 131, 0.5);
+    }
+
+    /* ===== Заголовок панели ===== */
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .settings-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: #fff;
+    }
+
+    #settings-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    #settings-close:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    /* ===== Группа контрола ===== */
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.2px;
+    }
+
+    .control-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: #0acf83;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* ===== Range input ===== */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0acf83;
+      cursor: pointer;
+      margin-top: -6px;
+      box-shadow: 0 0 8px rgba(10, 207, 131, 0.4);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 16px rgba(10, 207, 131, 0.6);
+      transform: scale(1.15);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0acf83;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 8px rgba(10, 207, 131, 0.4);
+    }
+
+    .select-control {
+      width: 100%;
+      height: 38px;
+      border: 1px solid rgba(10, 207, 131, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      outline: none;
+      padding: 0 12px;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .select-control:hover,
+    .select-control:focus {
+      border-color: rgba(10, 207, 131, 0.65);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 12px rgba(10, 207, 131, 0.18);
+    }
+
+    .select-control option {
+      background: #16213e;
+      color: #fff;
+    }
+
+    .preset-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .preset-button {
+      min-height: 34px;
+      border: 1px solid rgba(10, 207, 131, 0.28);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .preset-button:hover,
+    .preset-button:focus-visible {
+      border-color: rgba(10, 207, 131, 0.65);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(10, 207, 131, 0.16);
+      outline: none;
+    }
+
+    .preset-button.active {
+      border-color: rgba(10, 207, 131, 0.85);
+      background: rgba(10, 207, 131, 0.18);
+      color: #7dffc9;
+    }
+
+    .custom-palette-group {
+      display: none;
+    }
+
+    .custom-palette-group.visible {
+      display: block;
+    }
+
+    .color-controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .color-control {
+      height: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .color-control:hover {
+      border-color: rgba(10, 207, 131, 0.65);
+      transform: translateY(-1px);
+    }
+
+    .color-control input[type="color"] {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    /* ===== Toggle Switch ===== */
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle .slider {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle .slider::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle input:checked + .slider {
+      background: #0acf83;
+    }
+
+    .toggle input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
+      margin-left: 12px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    #settings-reset {
+      width: 100%;
+      min-height: 40px;
+      margin-top: 8px;
+      border: 1px solid rgba(10, 207, 131, 0.35);
+      border-radius: 8px;
+      background: rgba(10, 207, 131, 0.08);
+      color: #0acf83;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    #settings-reset:hover {
+      border-color: rgba(10, 207, 131, 0.65);
+      background: rgba(10, 207, 131, 0.15);
+      color: #7dffc9;
+    }

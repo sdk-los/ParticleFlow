@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoGivex — Эффекты мыши</title>
+  <style>
+    /* ===== CSS-переменные (из приложения инструкции) ===== */
+    :root {
+      --green-custom: #0acf83;
+      --red-custom: #ff4d4d;
+      --green-pale: rgba(10, 207, 131, 0.3);
+      --red-pale: rgba(255, 77, 77, 0.3);
+      --neutral-700: rgba(0, 0, 0, 0.1);
+      --bg-dark: #1a1a2e;
+      --bg-card: #16213e;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0b0;
+    }
+
+    /* ===== Глобальные стили ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== Шапка ===== */
+    .header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(180deg, #0f3460 0%, var(--bg-dark) 100%);
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--green-custom), #00e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ===== Навигация по секциям ===== */
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+      flex-wrap: wrap;
+      background: rgba(15, 52, 96, 0.3);
+      border-bottom: 1px solid rgba(10, 207, 131, 0.1);
+    }
+
+    .nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .nav a:hover {
+      color: var(--green-custom);
+      border-color: var(--green-pale);
+      background: rgba(10, 207, 131, 0.05);
+    }
+
+    /* ===== Секции ===== */
+    .section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--green-custom);
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green-pale), transparent);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ================================================================ */
+    /* ЭФФЕКТ №1 — Радиальный градиент (поля ввода)                     */
+    /* ================================================================ */
+    .input-wrapper {
+      padding: 2px;
+      border-radius: 33px;
+      max-width: 500px;
+      margin: 0 auto;
+      transition: box-shadow 0.5s;
+    }
+
+    .input-wrapper:hover {
+      box-shadow: 0px 4px 30px 0px var(--green-pale);
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 31px;
+      padding: 0 20px;
+      background: #f0f0f0;
+      outline: none;
+      font-size: 1rem;
+      color: #333;
+      transition: box-shadow 0.3s;
+    }
+
+    .input-wrapper input:focus {
+      box-shadow: inset 0 0 0 2px var(--green-custom);
+    }
+
+    .input-wrapper.error input:focus {
+      box-shadow: inset 0 0 0 2px var(--red-custom);
+    }
+
+    .input-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .input-demo .toggle-error {
+      margin-top: 10px;
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 1px solid var(--green-pale);
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+
+    .input-demo .toggle-error:hover {
+      background: var(--green-pale);
+      color: #fff;
+    }
+
+    /* ================================================================ */
+    /* ЭФФЕКТ №2 — Радиальный градиент (карточки)                       */
+    /* ================================================================ */
+    .gradient-card {
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: box-shadow 0.3s;
+    }
+
+    .gradient-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .gradient-card p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .gradient-card .card-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 12px;
+      background: var(--green-pale);
+      color: var(--green-custom);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 16px;
+    }
+
+    /* ================================================================ */
+    /* ЭФФЕКТ №3 — Система частиц на Canvas                             */
+    /* ================================================================ */
+    .canvas-container {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(10, 207, 131, 0.15);
+      box-shadow: 0 0 40px rgba(10, 207, 131, 0.05);
+    }
+
+    .canvas-container canvas {
+      display: block;
+      width: 100%;
+      height: 400px;
+      background: var(--bg-dark);
+    }
+
+    .canvas-label {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    /* ================================================================ */
+    /* ЭФФЕКТ №4 — CSS-анимации при наведении (градиентные кнопки)      */
+    /* ================================================================ */
+    .buttons-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .gradient-button {
+      position: relative;
+      border-radius: 40px;
+      overflow: hidden;
+      background: #fff;
+      z-index: 1;
+      transition: color 0.3s;
+      cursor: pointer;
+      padding: 16px 32px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .gradient-button span {
+      transition: color 0.3s;
+    }
+
+    .gradient-button .arrow {
+      display: inline-block;
+      position: relative;
+      color: #fff;
+      transition: color 0.3s, transform 0.3s;
+      transform: translateX(-5px);
+      margin-left: 8px;
+      font-size: 1.2rem;
+    }
+
+    .gradient-button .arrow-path {
+      opacity: 0;
+      transition: opacity 0.3s;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .gradient-button:hover,
+    .gradient-button:hover span {
+      color: var(--green-custom);
+    }
+
+    .gradient-button:hover .arrow {
+      color: var(--green-custom);
+      transform: translateX(0);
+    }
+
+    .gradient-button:hover .arrow-path {
+      opacity: 1;
+    }
+
+    /* Вариант кнопки с зелёным фоном */
+    .gradient-button.green-bg {
+      background: var(--green-custom);
+      color: #fff;
+    }
+
+    .gradient-button.green-bg span {
+      color: #fff;
+    }
+
+    .gradient-button.green-bg .arrow {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .gradient-button.green-bg:hover,
+    .gradient-button.green-bg:hover span {
+      color: #1a1a2e;
+    }
+
+    .gradient-button.green-bg:hover .arrow {
+      color: #1a1a2e;
+    }
+
+    /* Вариант кнопки с тёмным фоном */
+    .gradient-button.dark-bg {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .gradient-button.dark-bg span {
+      color: var(--text-primary);
+    }
+
+    .gradient-button.dark-bg .arrow {
+      color: var(--text-secondary);
+    }
+
+    .gradient-button.dark-bg:hover,
+    .gradient-button.dark-bg:hover span {
+      color: var(--green-custom);
+    }
+
+    .gradient-button.dark-bg:hover .arrow {
+      color: var(--green-custom);
+    }
+
+    /* ===== Подвал ===== */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer span {
+      color: var(--green-custom);
+    }
+
+    /* ===== Адаптивность ===== */
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .section {
+        padding: 40px 16px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .gradient-button {
+        padding: 14px 24px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== ШАПКА ===== -->
+  <header class="header">
+    <h1>AutoGivex · Эффекты мыши</h1>
+    <p>Демонстрация 4 типов интерактивных эффектов при движении курсора</p>
+  </header>
+
+  <!-- ===== НАВИГАЦИЯ ===== -->
+  <nav class="nav">
+    <a href="#effect-1">Радиальный градиент (поля ввода)</a>
+    <a href="#effect-2">Радиальный градиент (карточки)</a>
+    <a href="#effect-3">Система частиц</a>
+    <a href="#effect-4">Градиентные кнопки</a>
+  </nav>
+
+  <!-- ================================================================ -->
+  <!-- ЭФФЕКТ №1 — Радиальный градиент, следующий за курсором           -->
+  <!-- ================================================================ -->
+  <section class="section" id="effect-1">
+    <h2 class="section-title">Эффект №1 · Радиальный градиент</h2>
+    <p class="section-subtitle">
+      Поле ввода, обёрнутое в <code>div</code> с <code>radial-gradient</code>, который следует за курсором.
+      Градиент просвечивает через отступ <code>2px</code>, создавая эффект «светящейся обводки».
+    </p>
+
+    <div class="input-demo">
+      <!-- Поле ввода — обычное состояние -->
+      <div id="input-gradient-1" class="input-wrapper" style="background: radial-gradient(150px circle at 0px 0px, var(--green-custom), transparent 80%);">
+        <input type="text" placeholder="Введите текст..." />
+      </div>
+
+      <!-- Поле ввода — состояние ошибки -->
+      <div id="input-gradient-2" class="input-wrapper error" style="background: radial-gradient(150px circle at 0px 0px, var(--red-custom), transparent 80%);">
+        <input type="text" placeholder="Поле с ошибкой..." value="Неверный формат" />
+      </div>
+
+      <button class="toggle-error" onclick="toggleErrorState()">Переключить ошибку у второго поля</button>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================ -->
+  <!-- ЭФФЕКТ №2 — Радиальный градиент для UI-компонентов (карточки)    -->
+  <!-- ================================================================ -->
+  <section class="section" id="effect-2">
+    <h2 class="section-title">Эффект №2 · Радиальный градиент для карточек</h2>
+    <p class="section-subtitle">
+      UI-компонент (карточка) с <code>radial-gradient</code>, который следует за курсором.
+      Радиус градиента — <code>200px</code>, цвет — фирменный зелёный.
+    </p>
+
+    <div id="gradient-card" class="gradient-card" style="background: radial-gradient(200px circle at 0px 0px, var(--green-custom), transparent 80%), var(--bg-card);">
+      <h3>AutoGivex Platform</h3>
+      <p>
+        Инновационная платформа для автоматизации процессов. Следящий радиальный градиент
+        создаёт эффект «прожектора», который подсвечивает элемент под курсором.
+      </p>
+      <span class="card-badge">✨ Интерактивная карточка</span>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================ -->
+  <!-- ЭФФЕКТ №3 — Система частиц на Canvas                             -->
+  <!-- ================================================================ -->
+  <section class="section" id="effect-3">
+    <h2 class="section-title">Эффект №3 · Система частиц на Canvas</h2>
+    <p class="section-subtitle">
+      Анимированные частицы с зелёным неоновым свечением. Каждая частица — круг,
+      нарисованный через Canvas 2D с <code>shadowColor: #0acf83</code> и <code>shadowBlur</code>.
+    </p>
+
+    <div class="canvas-container">
+      <canvas id="particle-canvas"></canvas>
+      <div class="canvas-label">✦ Particle System ✦</div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================ -->
+  <!-- ЭФФЕКТ №4 — CSS-анимации при наведении (градиентные кнопки)      -->
+  <!-- ================================================================ -->
+  <section class="section" id="effect-4">
+    <h2 class="section-title">Эффект №4 · Градиентные кнопки</h2>
+    <p class="section-subtitle">
+      Кнопки с анимированной стрелкой при <code>:hover</code>. Стрелка смещается
+      <code>translateX(-5px) → translateX(0)</code>, цвет текста меняется на зелёный.
+    </p>
+
+    <div class="buttons-demo">
+      <!-- Белая кнопка (как в оригинале) -->
+      <button class="gradient-button">
+        <span>Начать сейчас</span>
+        <span class="arrow">
+          →
+          <span class="arrow-path">→</span>
+        </span>
+      </button>
+
+      <!-- Зелёная кнопка -->
+      <button class="gradient-button green-bg">
+        <span>Подробнее</span>
+        <span class="arrow">
+          →
+          <span class="arrow-path">→</span>
+        </span>
+      </button>
+
+      <!-- Тёмная кнопка -->
+      <button class="gradient-button dark-bg">
+        <span>Документация</span>
+        <span class="arrow">
+          →
+          <span class="arrow-path">→</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== ПОДВАЛ ===== -->
+  <footer class="footer">
+    <p>AutoGivex <span>✦</span> Демонстрация эффектов мыши</p>
+  </footer>
+
+  <!-- ================================================================ -->
+  <!-- JAVASCRIPT                                                       -->
+  <!-- ================================================================ -->
+  <script>
+    // ================================================================
+    // ЭФФЕКТ №1 — Радиальный градиент для полей ввода
+    // ================================================================
+    (function initInputEffects() {
+      const inputWrappers = document.querySelectorAll('.input-wrapper');
+
+      inputWrappers.forEach(function(wrapper) {
+        wrapper.addEventListener('mousemove', function(e) {
+          const rect = wrapper.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const isError = wrapper.classList.contains('error');
+          const color = isError ? 'var(--red-custom)' : 'var(--green-custom)';
+          wrapper.style.background = 'radial-gradient(150px circle at ' + x + 'px ' + y + 'px, ' + color + ', transparent 80%)';
+        });
+
+        wrapper.addEventListener('mouseleave', function() {
+          const isError = wrapper.classList.contains('error');
+          const color = isError ? 'var(--red-custom)' : 'var(--green-custom)';
+          wrapper.style.background = 'radial-gradient(150px circle at 0px 0px, ' + color + ', transparent 80%)';
+        });
+      });
+
+      // Функция переключения ошибки (глобальная, для кнопки)
+      window.toggleErrorState = function() {
+        const wrapper = document.getElementById('input-gradient-2');
+        wrapper.classList.toggle('error');
+        const isError = wrapper.classList.contains('error');
+        const color = isError ? 'var(--red-custom)' : 'var(--green-custom)';
+        wrapper.style.background = 'radial-gradient(150px circle at 0px 0px, ' + color + ', transparent 80%)';
+      };
+    })();
+
+    // ================================================================
+    // ЭФФЕКТ №2 — Радиальный градиент для карточек
+    // ================================================================
+    (function initCardEffect() {
+      const card = document.getElementById('gradient-card');
+
+      card.addEventListener('mousemove', function(e) {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.background = 'radial-gradient(200px circle at ' + x + 'px ' + y + 'px, var(--green-custom), transparent 80%), var(--bg-card)';
+      });
+
+      card.addEventListener('mouseleave', function() {
+        card.style.background = 'radial-gradient(200px circle at 0px 0px, var(--green-custom), transparent 80%), var(--bg-card)';
+      });
+    })();
+
+    // ================================================================
+    // ЭФФЕКТ №3 — Система частиц на Canvas
+    // ================================================================
+    (function initParticleSystem() {
+      var canvas = document.getElementById('particle-canvas');
+      var ctx = canvas.getContext('2d');
+      var particles = [];
+      var animationId = null;
+      var mouseX = -1000;
+      var mouseY = -1000;
+
+      // Функция ресайза canvas
+      function resizeCanvas() {
+        var rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = 400;
+      }
+
+      // Класс Particle (как в инструкции, раздел 8.3)
+      function Particle(x, y, size, hue, ctx) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.hue = hue;
+        this.ctx = ctx;
+        this.shadowBlur = 20;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+        this.baseSize = size;
+      }
+
+      Particle.prototype.drawParticle = function() {
+        this.ctx.fillStyle = 'hsl(' + this.hue + ', 100%, 50%)';
+        this.ctx.shadowColor = '#0acf83';
+        this.ctx.shadowBlur = this.shadowBlur;
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, Math.abs(this.size), 0, 2 * Math.PI);
+        this.ctx.fill();
+      };
+
+      Particle.prototype.update = function() {
+        // Движение
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Притяжение к курсору (лёгкое)
+        var dx = mouseX - this.x;
+        var dy = mouseY - this.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 200) {
+          var force = (200 - dist) / 200 * 0.3;
+          this.vx += dx / dist * force;
+          this.vy += dy / dist * force;
+        }
+
+        // Торможение
+        this.vx *= 0.98;
+        this.vy *= 0.98;
+
+        // Отражение от границ
+        if (this.x < 0 || this.x > canvas.width) {
+          this.vx *= -1;
+          this.x = Math.max(0, Math.min(this.x, canvas.width));
+        }
+        if (this.y < 0 || this.y > canvas.height) {
+          this.vy *= -1;
+          this.y = Math.max(0, Math.min(this.y, canvas.height));
+        }
+
+        // Пульсация размера
+        this.size = this.baseSize + Math.sin(Date.now() * 0.002 + this.hue) * 0.5;
+      };
+
+      // Создание частиц
+      function createParticles() {
+        particles = [];
+        var count = Math.min(80, Math.floor(canvas.width / 12));
+        for (var i = 0; i < count; i++) {
+          particles.push(new Particle(
+            Math.random() * canvas.width,
+            Math.random() * canvas.height,
+            Math.random() * 4 + 1,
+            Math.random() * 60 + 100, // оттенки зелёного (100-160)
+            ctx
+          ));
+        }
+      }
+
+      // Анимационный цикл
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function(p) {
+          p.update();
+          p.drawParticle();
+        });
+        animationId = requestAnimationFrame(animate);
+      }
+
+      // Инициализация
+      function init() {
+        resizeCanvas();
+        createParticles();
+        if (animationId) cancelAnimationFrame(animationId);
+        animate();
+      }
+
+      // Отслеживание мыши на canvas
+      canvas.addEventListener('mousemove', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+
+      canvas.addEventListener('mouseleave', function() {
+        mouseX = -1000;
+        mouseY = -1000;
+      });
+
+      // Ресайз
+      window.addEventListener('resize', function() {
+        resizeCanvas();
+        createParticles();
+      });
+
+      init();
+    })();
+
+    // ================================================================
+    // ЭФФЕКТ №4 — (чистый CSS, JS не требуется)
+    // ================================================================
+    // Все анимации эффекта №4 реализованы через CSS-переходы.
+    // См. стили .gradient-button, .gradient-button .arrow,
+    // .gradient-button .arrow-path и соответствующие :hover-правила.
+  </script>
+
+</body>
+</html>
