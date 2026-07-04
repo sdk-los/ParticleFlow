@@ -87,6 +87,9 @@
         pulsate: true,
         bounce: true,
         showFps: false,
+        backgroundMode: 'gradient',
+        backgroundColor: '#1a1a2e',
+        backgroundGradientStrength: 0.35,
       });
 
       const config = { ...DEFAULT_CONFIG };
@@ -106,6 +109,9 @@
             shadowBlur: 10,
             pulsate: true,
             bounce: true,
+            backgroundMode: 'gradient',
+            backgroundColor: '#14213d',
+            backgroundGradientStrength: 0.2,
           },
         },
         neon: {
@@ -122,6 +128,9 @@
             shadowBlur: 40,
             pulsate: true,
             bounce: true,
+            backgroundMode: 'gradient',
+            backgroundColor: '#060b1f',
+            backgroundGradientStrength: 0.7,
           },
         },
         storm: {
@@ -138,6 +147,9 @@
             shadowBlur: 30,
             pulsate: true,
             bounce: true,
+            backgroundMode: 'solid',
+            backgroundColor: '#030711',
+            backgroundGradientStrength: 0.25,
           },
         },
         minimal: {
@@ -154,6 +166,9 @@
             shadowBlur: 4,
             pulsate: false,
             bounce: false,
+            backgroundMode: 'transparent',
+            backgroundColor: '#111827',
+            backgroundGradientStrength: 0.1,
           },
         },
       });
@@ -178,6 +193,41 @@
 
       const isValidHexColor = (value) =>
         typeof value === 'string' && CONSTANTS.HEX_COLOR_PATTERN.test(value);
+
+      function hexToRgb(hex) {
+        const normalized = hex.replace('#', '');
+        const value = normalized.length === 3
+          ? normalized.split('').map((character) => character + character).join('')
+          : normalized;
+        const intValue = Number.parseInt(value, 16);
+        return [(intValue >> 16) & 255, (intValue >> 8) & 255, intValue & 255];
+      }
+
+      function getBackgroundAccentColor() {
+        const [r, g, b] = hexToRgb(config.backgroundColor);
+        const mix = 0.2 + config.backgroundGradientStrength * 0.45;
+        const mixR = Math.round(r * (1 - mix) + 0 * mix);
+        const mixG = Math.round(g * (1 - mix) + 0 * mix);
+        const mixB = Math.round(b * (1 - mix) + 30 * mix);
+        return `rgb(${mixR}, ${mixG}, ${mixB})`;
+      }
+
+      function renderBackground() {
+        ctx.clearRect(0, 0, canvasBounds.width, canvasBounds.height);
+
+        if (config.backgroundMode === 'transparent') return;
+
+        if (config.backgroundMode === 'gradient') {
+          const gradient = ctx.createLinearGradient(0, 0, canvasBounds.width, canvasBounds.height);
+          gradient.addColorStop(0, config.backgroundColor);
+          gradient.addColorStop(1, getBackgroundAccentColor());
+          ctx.fillStyle = gradient;
+        } else {
+          ctx.fillStyle = config.backgroundColor;
+        }
+
+        ctx.fillRect(0, 0, canvasBounds.width, canvasBounds.height);
+      }
 
       function getCustomPaletteColors() {
         return [config.customColor1, config.customColor2, config.customColor3].filter(
@@ -451,6 +501,9 @@
         customColor3: updateParticleColors,
         cursorMode: syncCursorMode,
         shadowBlur: updateParticleShadowBlur,
+        backgroundMode: renderBackground,
+        backgroundColor: renderBackground,
+        backgroundGradientStrength: renderBackground,
       };
 
       function applySettings(key) {
@@ -491,7 +544,7 @@
 
       /* ── Animation loop ── */
       function animate(timestamp) {
-        ctx.clearRect(0, 0, canvasBounds.width, canvasBounds.height);
+        renderBackground();
         drawPointerTrails(timestamp);
         particles.forEach((p) => {
           p.update();
@@ -661,6 +714,12 @@
           return Object.prototype.hasOwnProperty.call(CURSOR_MODES, value)
             ? value
             : defaultValue;
+        }
+        if (key === 'backgroundMode') {
+          return ['solid', 'gradient', 'transparent'].includes(value) ? value : defaultValue;
+        }
+        if (key === 'backgroundColor') {
+          return isValidHexColor(value) ? value : defaultValue;
         }
         if (key.startsWith('customColor')) {
           return isValidHexColor(value) ? value : defaultValue;

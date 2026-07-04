@@ -195,6 +195,42 @@
 
     <details class="settings-section">
       <summary class="section-summary">
+        <span>Фон</span>
+        <span class="section-hint">Общий тон</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Режим фона</span>
+          </div>
+          <select data-setting="backgroundMode" class="select-control">
+            <option value="solid">Сплошной</option>
+            <option value="gradient">Градиент</option>
+            <option value="transparent">Прозрачный</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Цвет фона</span>
+          </div>
+          <label class="color-control" title="Цвет фона">
+            <input type="color" data-setting="backgroundColor" value="#1a1a2e">
+          </label>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Интенсивность градиента</span>
+            <span class="control-value" data-display="backgroundGradientStrength">0.35</span>
+          </div>
+          <input type="range" data-setting="backgroundGradientStrength" min="0" max="1" step="0.01" value="0.35">
+        </div>
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary class="section-summary">
         <span>Производительность</span>
         <span class="section-hint">Эффекты</span>
       </summary>
