@@ -24,155 +24,203 @@
       <button id="settings-close">✕</button>
     </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Пресеты настроек</span>
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Быстрый старт</span>
+        <span class="section-hint">Пресеты</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Пресеты настроек</span>
+          </div>
+          <div class="preset-controls" aria-label="Пресеты настроек">
+            <button class="preset-button" type="button" data-preset="calm">Calm</button>
+            <button class="preset-button" type="button" data-preset="neon">Neon</button>
+            <button class="preset-button" type="button" data-preset="storm">Storm</button>
+            <button class="preset-button" type="button" data-preset="minimal">Minimal</button>
+          </div>
+        </div>
       </div>
-      <div class="preset-controls" aria-label="Пресеты настроек">
-        <button class="preset-button" type="button" data-preset="calm">Calm</button>
-        <button class="preset-button" type="button" data-preset="neon">Neon</button>
-        <button class="preset-button" type="button" data-preset="storm">Storm</button>
-        <button class="preset-button" type="button" data-preset="minimal">Minimal</button>
-      </div>
-    </div>
+    </details>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Количество частиц</span>
-        <span class="control-value" data-display="particleCount">150</span>
-      </div>
-      <input type="range" data-setting="particleCount" min="10" max="300" value="150">
-    </div>
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Частицы</span>
+        <span class="section-hint">Количество и размер</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Количество частиц</span>
+            <span class="control-value" data-display="particleCount">150</span>
+          </div>
+          <input type="range" data-setting="particleCount" min="10" max="300" value="150">
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Размер частиц</span>
-        <span class="control-value" data-display="particleSize">4</span>
-      </div>
-      <input type="range" data-setting="particleSize" min="1" max="10" value="4">
-    </div>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Размер частиц</span>
+            <span class="control-value" data-display="particleSize">4</span>
+          </div>
+          <input type="range" data-setting="particleSize" min="1" max="10" value="4">
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Скорость частиц</span>
-        <span class="control-value" data-display="speedMultiplier">1.0</span>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Скорость частиц</span>
+            <span class="control-value" data-display="speedMultiplier">1.0</span>
+          </div>
+          <input type="range" data-setting="speedMultiplier" min="0.1" max="3.0" step="0.1" value="1.0">
+        </div>
       </div>
-      <input type="range" data-setting="speedMultiplier" min="0.1" max="3.0" step="0.1" value="1.0">
-    </div>
+    </details>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Оттенок (Hue)</span>
-        <span class="control-value" data-display="hue">130</span>
-      </div>
-      <input type="range" data-setting="hue" min="0" max="360" value="130">
-    </div>
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Движение</span>
+        <span class="section-hint">Поведение частиц</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Пульсация размера</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="pulsate" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включена</span>
+          </div>
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Цветовая палитра</span>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Отражение от границ</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="bounce" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включено</span>
+          </div>
+        </div>
       </div>
-      <select data-setting="colorPalette" class="select-control">
-        <option value="mono">Монохромная</option>
-        <option value="cool">Холодная</option>
-        <option value="warm">Тёплая</option>
-        <option value="neon">Неоновая</option>
-        <option value="rainbow">Радужная</option>
-        <option value="custom">Пользовательская</option>
-      </select>
-    </div>
+    </details>
 
-    <div class="control-group custom-palette-group" data-custom-palette>
-      <div class="control-label">
-        <span>Пользовательские цвета</span>
-      </div>
-      <div class="color-controls">
-        <label class="color-control" title="Первый цвет палитры">
-          <input type="color" data-setting="customColor1" value="#0acf83">
-        </label>
-        <label class="color-control" title="Второй цвет палитры">
-          <input type="color" data-setting="customColor2" value="#38bdf8">
-        </label>
-        <label class="color-control" title="Третий цвет палитры">
-          <input type="color" data-setting="customColor3" value="#f97316">
-        </label>
-      </div>
-    </div>
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Курсор</span>
+        <span class="section-hint">Взаимодействие</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Сила взаимодействия</span>
+            <span class="control-value" data-display="attractionForce">0.30</span>
+          </div>
+          <input type="range" data-setting="attractionForce" min="0" max="1" step="0.01" value="0.3">
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Сила взаимодействия</span>
-        <span class="control-value" data-display="attractionForce">0.30</span>
-      </div>
-      <input type="range" data-setting="attractionForce" min="0" max="1" step="0.01" value="0.3">
-    </div>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Радиус взаимодействия</span>
+            <span class="control-value" data-display="attractionRadius">200</span>
+          </div>
+          <input type="range" data-setting="attractionRadius" min="50" max="500" value="200">
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Режим курсора</span>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Режим курсора</span>
+          </div>
+          <select data-setting="cursorMode" class="select-control">
+            <option value="attract">Притяжение</option>
+            <option value="repel">Отталкивание</option>
+            <option value="orbit">Орбита</option>
+            <option value="trail">След</option>
+          </select>
+        </div>
       </div>
-      <select data-setting="cursorMode" class="select-control">
-        <option value="attract">Притяжение</option>
-        <option value="repel">Отталкивание</option>
-        <option value="orbit">Орбита</option>
-        <option value="trail">След</option>
-      </select>
-    </div>
+    </details>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Радиус взаимодействия</span>
-        <span class="control-value" data-display="attractionRadius">200</span>
-      </div>
-      <input type="range" data-setting="attractionRadius" min="50" max="500" value="200">
-    </div>
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Цвет</span>
+        <span class="section-hint">Палитра</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Оттенок (Hue)</span>
+            <span class="control-value" data-display="hue">130</span>
+          </div>
+          <input type="range" data-setting="hue" min="0" max="360" value="130">
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Свечение (ShadowBlur)</span>
-        <span class="control-value" data-display="shadowBlur">20</span>
-      </div>
-      <input type="range" data-setting="shadowBlur" min="0" max="50" value="20">
-    </div>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Цветовая палитра</span>
+          </div>
+          <select data-setting="colorPalette" class="select-control">
+            <option value="mono">Монохромная</option>
+            <option value="cool">Холодная</option>
+            <option value="warm">Тёплая</option>
+            <option value="neon">Неоновая</option>
+            <option value="rainbow">Радужная</option>
+            <option value="custom">Пользовательская</option>
+          </select>
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Пульсация размера</span>
+        <div class="control-group custom-palette-group" data-custom-palette>
+          <div class="control-label">
+            <span>Пользовательские цвета</span>
+          </div>
+          <div class="color-controls">
+            <label class="color-control" title="Первый цвет палитры">
+              <input type="color" data-setting="customColor1" value="#0acf83">
+            </label>
+            <label class="color-control" title="Второй цвет палитры">
+              <input type="color" data-setting="customColor2" value="#38bdf8">
+            </label>
+            <label class="color-control" title="Третий цвет палитры">
+              <input type="color" data-setting="customColor3" value="#f97316">
+            </label>
+          </div>
+        </div>
       </div>
-      <div class="toggle-wrapper">
-        <label class="toggle">
-          <input type="checkbox" data-setting="pulsate" checked>
-          <span class="slider"></span>
-        </label>
-        <span class="toggle-label">Включена</span>
-      </div>
-    </div>
+    </details>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Отражение от границ</span>
-      </div>
-      <div class="toggle-wrapper">
-        <label class="toggle">
-          <input type="checkbox" data-setting="bounce" checked>
-          <span class="slider"></span>
-        </label>
-        <span class="toggle-label">Включено</span>
-      </div>
-    </div>
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Производительность</span>
+        <span class="section-hint">Эффекты</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Свечение (ShadowBlur)</span>
+            <span class="control-value" data-display="shadowBlur">20</span>
+          </div>
+          <input type="range" data-setting="shadowBlur" min="0" max="50" value="20">
+        </div>
 
-    <div class="control-group">
-      <div class="control-label">
-        <span>Показывать FPS</span>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Показывать FPS</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="showFps">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Выключено</span>
+          </div>
+        </div>
       </div>
-      <div class="toggle-wrapper">
-        <label class="toggle">
-          <input type="checkbox" data-setting="showFps">
-          <span class="slider"></span>
-        </label>
-        <span class="toggle-label">Выключено</span>
-      </div>
-    </div>
+    </details>
 
     <button id="settings-reset" type="button">Сбросить настройки</button>
   </div>
