@@ -2,3 +2,6 @@
 *.log
 .vscode/
 .idea/
+
+instructions/
+test_pages/
