@@ -2,8 +2,29 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Система частиц | Fullscreen</title>
+
+  <!-- PWA: Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- PWA: iOS (Safari) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Particles">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- PWA: Android (Chrome) -->
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- PWA: Windows / IE -->
+  <meta name="application-name" content="Particles">
+  <meta name="msapplication-TileColor" content="#1a1a2e">
+  <meta name="msapplication-TileImage" content="icons/icon-192.png">
+
+  <!-- PWA: Цвет темы (Chrome Android) -->
+  <meta name="theme-color" content="#1a1a2e">
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -262,6 +283,19 @@
   </div>
 
   <script src="js/script.js"></script>
+
+  <!-- Регистрация Service Worker для PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('SW зарегистрирован:', reg.scope);
+        }).catch((err) => {
+          console.warn('Ошибка регистрации SW:', err);
+        });
+      });
+    }
+  </script>
 
 </body>
 </html>

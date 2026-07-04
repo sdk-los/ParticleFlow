@@ -6,3 +6,9 @@
 instructions/
 test_pages/
 instructions/project-improvement-ideas.md
+
+# PWA — зависимости для генерации иконок (не нужны на GitHub Pages)
+node_modules/
+package.json
+package-lock.json
+scripts/
