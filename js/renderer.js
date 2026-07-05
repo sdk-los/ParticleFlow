@@ -10,6 +10,9 @@ window.ParticleSystem = window.ParticleSystem || {};
     height: window.innerHeight,
   };
 
+  ParticleSystem.cachedGradient = null;
+  ParticleSystem.lastGradientConfig = {};
+
   ParticleSystem.renderBackground = function renderBackground() {
     const ctx = ParticleSystem.ctx;
     ctx.clearRect(0, 0, ParticleSystem.canvasBounds.width, ParticleSystem.canvasBounds.height);
@@ -17,10 +20,22 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (config.backgroundMode === 'transparent') return;
 
     if (config.backgroundMode === 'gradient') {
-      const gradient = ctx.createLinearGradient(0, 0, ParticleSystem.canvasBounds.width, ParticleSystem.canvasBounds.height);
-      gradient.addColorStop(0, config.backgroundColor);
-      gradient.addColorStop(1, ParticleSystem.getBackgroundAccentColor());
-      ctx.fillStyle = gradient;
+      // Кешируем градиент, пересчитываем только при смене конфига
+      const needsUpdate = 
+        !ParticleSystem.cachedGradient ||
+        ParticleSystem.lastGradientConfig.backgroundColor !== config.backgroundColor ||
+        ParticleSystem.lastGradientConfig.accentColor !== ParticleSystem.getBackgroundAccentColor();
+      
+      if (needsUpdate) {
+        ParticleSystem.cachedGradient = ctx.createLinearGradient(0, 0, ParticleSystem.canvasBounds.width, ParticleSystem.canvasBounds.height);
+        ParticleSystem.cachedGradient.addColorStop(0, config.backgroundColor);
+        ParticleSystem.cachedGradient.addColorStop(1, ParticleSystem.getBackgroundAccentColor());
+        ParticleSystem.lastGradientConfig = {
+          backgroundColor: config.backgroundColor,
+          accentColor: ParticleSystem.getBackgroundAccentColor()
+        };
+      }
+      ctx.fillStyle = ParticleSystem.cachedGradient;
     } else {
       ctx.fillStyle = config.backgroundColor;
     }

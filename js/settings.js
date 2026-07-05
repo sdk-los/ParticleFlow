@@ -31,9 +31,25 @@ window.ParticleSystem = window.ParticleSystem || {};
     explosionLifetime: null,
     explosionSize: null,
     explosionMode: null,
+    /* ── Тропы частиц ── */
+    trailEnabled: null,
+    trailLength: null,
+    trailOpacity: null,
   };
 
   ParticleSystem.applySettings = function applySettings(key) {
+    // Автоматически отключаем конфликтующие эффекты для оптимизации FPS
+    if (key === 'trailEnabled' && config.trailEnabled) {
+      config.shadowBlur = 0;
+      ParticleSystem.updateParticleShadowBlur();
+      const shadowBlurControl = ParticleSystem.getSettingControl('shadowBlur');
+      if (shadowBlurControl) ParticleSystem.syncControl(shadowBlurControl);
+    } else if (key === 'shadowBlur' && config.shadowBlur > 0) {
+      config.trailEnabled = false;
+      const trailControl = ParticleSystem.getSettingControl('trailEnabled');
+      if (trailControl) ParticleSystem.syncControl(trailControl);
+    }
+    
     const applier = SETTING_APPLIERS[key];
     if (applier) applier();
   };
@@ -55,7 +71,7 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   /* ── Display helpers ── */
   ParticleSystem.formatDisplayValue = function formatDisplayValue(key, value) {
-    if (key === 'attractionForce') return value.toFixed(2);
+    if (key === 'attractionForce' || key === 'trailOpacity') return value.toFixed(2);
     if (key === 'speedMultiplier') return value.toFixed(1);
     return String(value);
   };
@@ -64,7 +80,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps') {
       return checked ? 'Включено' : 'Выключено';
     }
-    return checked ? 'Включена' : 'Выключена';
+    return checked ? 'Включены' : 'Выключены';
   };
 
   /* ── DOM queries ── */
@@ -204,6 +220,12 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (!preset) return;
 
     Object.assign(config, preset.settings);
+    
+    // Разрешаем конфликты между shadowBlur и trailEnabled
+    if (config.shadowBlur > 0 && config.trailEnabled) {
+      config.trailEnabled = false;
+    }
+    
     ParticleSystem.syncControlsFromConfig();
     ParticleSystem.syncCursorMode();
     ParticleSystem.createParticles();

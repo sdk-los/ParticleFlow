@@ -5,7 +5,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   const { ParticleSystem, ParticleSystem: { CONSTANTS, COLOR_PALETTES, CURSOR_MODES } } = window;
 
   ParticleSystem.DEFAULT_CONFIG = Object.freeze({
-    particleCount: 150,
+    particleCount: 100,
     particleSize: 4,
     speedMultiplier: 1.0,
     hue: 130,
@@ -16,7 +16,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     attractionForce: 0.3,
     cursorMode: 'attract',
     attractionRadius: 200,
-    shadowBlur: 20,
+    shadowBlur: 0,
     pulsate: true,
     bounce: true,
     showFps: false,
@@ -35,6 +35,10 @@ window.ParticleSystem = window.ParticleSystem || {};
     explosionLifetime: 1000,
     explosionSize: 4,
     explosionMode: 'burst',
+    /* ── Тропы частиц ── */
+    trailEnabled: false,
+    trailLength: 10,
+    trailOpacity: 0.3,
   });
 
   ParticleSystem.SETTINGS_PRESETS = Object.freeze({

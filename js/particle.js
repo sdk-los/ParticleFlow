@@ -18,10 +18,30 @@ window.ParticleSystem = window.ParticleSystem || {};
       this.shadowBlur = config.shadowBlur;
       this.vx = ParticleSystem.randomBetween(-SPEED_VARIANCE, SPEED_VARIANCE) * config.speedMultiplier;
       this.vy = ParticleSystem.randomBetween(-SPEED_VARIANCE, SPEED_VARIANCE) * config.speedMultiplier;
+      this.trail = [];
+      this.maxTrailLength = config.trailLength;
     }
 
     draw() {
       const ctx = ParticleSystem.ctx;
+      
+      // Draw trail if enabled (optimized with lineWidth gradient)
+      if (config.trailEnabled && this.trail.length > 1) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${config.trailOpacity})`;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(this.trail[0].x, this.trail[0].y);
+        for (let i = 1; i < this.trail.length; i++) {
+          ctx.lineWidth = Math.abs(this.size) * (i / this.trail.length);
+          ctx.lineTo(this.trail[i].x, this.trail[i].y);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(this.trail[i].x, this.trail[i].y);
+        }
+      }
+      
+      // Draw particle
       ctx.fillStyle = this.color;
       ctx.shadowColor = this.color;
       ctx.shadowBlur = this.shadowBlur;
@@ -95,6 +115,12 @@ window.ParticleSystem = window.ParticleSystem || {};
     }
 
     update() {
+      // Add current position to trail
+      this.trail.push({ x: this.x, y: this.y });
+      if (this.trail.length > this.maxTrailLength) {
+        this.trail.shift();
+      }
+      
       this.x += this.vx;
       this.y += this.vy;
       this.applyCursorInteraction();

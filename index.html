@@ -81,9 +81,9 @@
         <div class="control-group">
           <div class="control-label">
             <span>Количество частиц</span>
-            <span class="control-value" data-display="particleCount">150</span>
+            <span class="control-value" data-display="particleCount">100</span>
           </div>
-          <input type="range" data-setting="particleCount" min="10" max="300" value="150">
+          <input type="range" data-setting="particleCount" min="10" max="300" value="100">
         </div>
 
         <div class="control-group">
@@ -239,6 +239,43 @@
 
     <details class="settings-section">
       <summary class="section-summary">
+        <span>Тропы частиц</span>
+        <span class="section-hint">Затухающие следы</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Тропы частиц</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="trailEnabled" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включены</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Длина следа</span>
+            <span class="control-value" data-display="trailLength">10</span>
+          </div>
+          <input type="range" data-setting="trailLength" min="2" max="30" value="10">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Прозрачность следа</span>
+            <span class="control-value" data-display="trailOpacity">0.30</span>
+          </div>
+          <input type="range" data-setting="trailOpacity" min="0.05" max="1" step="0.05" value="0.3">
+        </div>
+      </div>
+    </details>
+
+    <details class="settings-section">
+      <summary class="section-summary">
         <span>Цвет</span>
         <span class="section-hint">Палитра</span>
       </summary>
@@ -329,9 +366,9 @@
         <div class="control-group">
           <div class="control-label">
             <span>Свечение (ShadowBlur)</span>
-            <span class="control-value" data-display="shadowBlur">20</span>
+            <span class="control-value" data-display="shadowBlur">0</span>
           </div>
-          <input type="range" data-setting="shadowBlur" min="0" max="50" value="20">
+          <input type="range" data-setting="shadowBlur" min="0" max="50" value="0">
         </div>
 
         <div class="control-group">
