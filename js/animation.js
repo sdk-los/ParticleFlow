@@ -10,6 +10,7 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   ParticleSystem.animate = function animate(timestamp) {
     ParticleSystem.renderBackground();
+    ParticleSystem.drawAurora(timestamp);
     ParticleSystem.drawPointerTrails(timestamp);
     ParticleSystem.drawConnections();
     ParticleSystem.particles.forEach((p) => {

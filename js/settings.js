@@ -23,6 +23,9 @@ window.ParticleSystem = window.ParticleSystem || {};
     connectionDistance: null,
     connectionWidth: null,
     connectionOpacity: null,
+    auroraEnabled: null,
+    auroraIntensity: null,
+    auroraSpeed: null,
     showParticleCount: null,
     /* ── Взрывы по клику ── */
     explosionEnabled: null,

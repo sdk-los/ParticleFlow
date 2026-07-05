@@ -43,6 +43,38 @@ window.ParticleSystem = window.ParticleSystem || {};
     ctx.fillRect(0, 0, ParticleSystem.canvasBounds.width, ParticleSystem.canvasBounds.height);
   };
 
+  ParticleSystem.drawAurora = function drawAurora(timestamp) {
+    if (!config.auroraEnabled) return;
+
+    const ctx = ParticleSystem.ctx;
+    const width = ParticleSystem.canvasBounds.width;
+    const height = ParticleSystem.canvasBounds.height;
+    if (!width || !height) return;
+
+    const time = timestamp * 0.00035 * config.auroraSpeed;
+    const bandCount = 6;
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    const baseHue = (config.hue + 55) % 360;
+    const alphaBase = 0.04 + config.auroraIntensity * 0.16;
+
+    for (let i = 0; i <= bandCount; i++) {
+      const stop = i / bandCount;
+      const phase = time + i * 0.8;
+      const hue = (baseHue + Math.sin(phase) * 45 + i * 18) % 360;
+      const bandAlpha = alphaBase + Math.sin(phase * 1.2 + i) * 0.02;
+      gradient.addColorStop(
+        stop,
+        `hsla(${Math.round(hue)}, 85%, 60%, ${Math.max(0.03, bandAlpha)})`
+      );
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  };
+
   ParticleSystem.drawConnections = function drawConnections() {
     if (!config.showConnections) return;
 
