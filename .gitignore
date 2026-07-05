@@ -12,3 +12,4 @@ node_modules/
 package.json
 package-lock.json
 scripts/
+plans/modularization-plan.md

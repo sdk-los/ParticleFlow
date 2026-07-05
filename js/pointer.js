@@ -1,0 +1,52 @@
+/* ── Pointer tracking ── */
+window.ParticleSystem = window.ParticleSystem || {};
+
+(function () {
+  const { ParticleSystem, ParticleSystem: { CONSTANTS, config } } = window;
+
+  ParticleSystem.mouseX = -1000;
+  ParticleSystem.mouseY = -1000;
+  ParticleSystem.pointerTrails = [];
+
+  ParticleSystem.updatePointerPosition = function updatePointerPosition(clientX, clientY) {
+    const canvas = document.getElementById('particle-canvas');
+    const rect = canvas.getBoundingClientRect();
+    ParticleSystem.mouseX = clientX - rect.left;
+    ParticleSystem.mouseY = clientY - rect.top;
+    ParticleSystem.addPointerTrailPoint();
+  };
+
+  ParticleSystem.resetPointerPosition = function resetPointerPosition() {
+    ParticleSystem.mouseX = CONSTANTS.MOUSE_OUT_OF_BOUNDS;
+    ParticleSystem.mouseY = CONSTANTS.MOUSE_OUT_OF_BOUNDS;
+  };
+
+  ParticleSystem.isPointerActive = function isPointerActive() {
+    return (
+      ParticleSystem.mouseX !== CONSTANTS.MOUSE_OUT_OF_BOUNDS &&
+      ParticleSystem.mouseY !== CONSTANTS.MOUSE_OUT_OF_BOUNDS
+    );
+  };
+
+  ParticleSystem.addPointerTrailPoint = function addPointerTrailPoint() {
+    if (config.cursorMode !== 'trail' || !ParticleSystem.isPointerActive()) return;
+
+    const lastPoint = ParticleSystem.pointerTrails[ParticleSystem.pointerTrails.length - 1];
+    if (lastPoint) {
+      const dx = ParticleSystem.mouseX - lastPoint.x;
+      const dy = ParticleSystem.mouseY - lastPoint.y;
+      if (dx * dx + dy * dy < CONSTANTS.TRAIL_MIN_DISTANCE ** 2) return;
+    }
+
+    ParticleSystem.pointerTrails.push({
+      x: ParticleSystem.mouseX,
+      y: ParticleSystem.mouseY,
+      createdAt: performance.now(),
+      color: ParticleSystem.getParticleColor(),
+    });
+
+    if (ParticleSystem.pointerTrails.length > CONSTANTS.TRAIL_MAX_POINTS) {
+      ParticleSystem.pointerTrails.splice(0, ParticleSystem.pointerTrails.length - CONSTANTS.TRAIL_MAX_POINTS);
+    }
+  };
+})();
