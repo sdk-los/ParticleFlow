@@ -12,4 +12,7 @@ node_modules/
 package.json
 package-lock.json
 scripts/
+
 plans/modularization-plan.md
+plans/click-explosions-plan.md
+instructions/project-improvement-ideas.md

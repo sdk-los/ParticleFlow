@@ -163,4 +163,59 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.syncCursorMode = function syncCursorMode() {
     if (config.cursorMode !== 'trail') ParticleSystem.pointerTrails = [];
   };
+
+  /* ── Взрывы по клику ── */
+
+  ParticleSystem.explosionParticles = [];
+
+  class ExplosionParticle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * CONSTANTS.TAU;
+      const speed = config.explosionSpeed * (0.5 + Math.random() * 0.8);
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed;
+      this.size = config.explosionSize * (0.5 + Math.random());
+      this.baseSize = this.size;
+      this.color = ParticleSystem.getParticleColor();
+      this.createdAt = performance.now();
+      this.alpha = 1;
+    }
+
+    update() {
+      const age = performance.now() - this.createdAt;
+      const life = 1 - age / config.explosionLifetime;
+      if (life <= 0) return false;
+
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= CONSTANTS.EXPLOSION_FADE_OUT;
+      this.vy *= CONSTANTS.EXPLOSION_FADE_OUT;
+      this.alpha = life;
+      this.size = this.baseSize * life;
+      return true;
+    }
+
+    draw() {
+      const ctx = ParticleSystem.ctx;
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = config.shadowBlur;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, Math.abs(this.size), 0, CONSTANTS.TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  ParticleSystem.createExplosion = function createExplosion(x, y) {
+    if (!config.explosionEnabled) return;
+    const count = config.explosionCount;
+    for (let i = 0; i < count; i++) {
+      ParticleSystem.explosionParticles.push(new ExplosionParticle(x, y));
+    }
+  };
 })();

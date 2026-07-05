@@ -27,6 +27,12 @@ window.ParticleSystem = window.ParticleSystem || {};
     connectionDistance: 120,
     connectionWidth: 1,
     connectionOpacity: 0.3,
+    /* ── Взрывы по клику ── */
+    explosionEnabled: true,
+    explosionCount: 30,
+    explosionSpeed: 6,
+    explosionLifetime: 1000,
+    explosionSize: 4,
   });
 
   ParticleSystem.SETTINGS_PRESETS = Object.freeze({

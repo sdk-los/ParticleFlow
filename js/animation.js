@@ -16,6 +16,9 @@ window.ParticleSystem = window.ParticleSystem || {};
       p.update();
       p.draw();
     });
+    /* ── Взрывы по клику ── */
+    ParticleSystem.explosionParticles = ParticleSystem.explosionParticles.filter((p) => p.update());
+    ParticleSystem.explosionParticles.forEach((p) => p.draw());
     ParticleSystem.updateFpsIndicator(timestamp);
     ParticleSystem.animationId = requestAnimationFrame(ParticleSystem.animate);
   };

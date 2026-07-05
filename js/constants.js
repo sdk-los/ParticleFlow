@@ -33,6 +33,12 @@ window.ParticleSystem = window.ParticleSystem || {};
     TRAIL_MIN_DISTANCE: 8,
     ORBIT_TANGENTIAL_FORCE: 0.85,
     ORBIT_RADIAL_BALANCE: 0.2,
+    /* ── Взрывы по клику ── */
+    EXPLOSION_COUNT: 30,
+    EXPLOSION_SPEED: 6,
+    EXPLOSION_LIFETIME: 1000,
+    EXPLOSION_SIZE: 4,
+    EXPLOSION_FADE_OUT: 0.97,
   });
 
   ParticleSystem.COLOR_PALETTES = Object.freeze({

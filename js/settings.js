@@ -23,6 +23,12 @@ window.ParticleSystem = window.ParticleSystem || {};
     connectionDistance: null,
     connectionWidth: null,
     connectionOpacity: null,
+    /* ── Взрывы по клику ── */
+    explosionEnabled: null,
+    explosionCount: null,
+    explosionSpeed: null,
+    explosionLifetime: null,
+    explosionSize: null,
   };
 
   ParticleSystem.applySettings = function applySettings(key) {

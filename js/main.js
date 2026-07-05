@@ -23,6 +23,10 @@ window.ParticleSystem = window.ParticleSystem || {};
         const touch = e.touches[0];
         if (!touch) return;
         ParticleSystem.updatePointerPosition(touch.clientX, touch.clientY);
+        ParticleSystem.createExplosion(
+          touch.clientX - canvas.getBoundingClientRect().left,
+          touch.clientY - canvas.getBoundingClientRect().top
+        );
       },
       { passive: true }
     );
@@ -73,6 +77,17 @@ window.ParticleSystem = window.ParticleSystem || {};
     });
   };
 
+  ParticleSystem.setupCanvasClickExplosion = function setupCanvasClickExplosion() {
+    const canvas = document.getElementById('particle-canvas');
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ParticleSystem.createExplosion(x, y);
+    });
+  };
+
   /* ── Init ── */
   ParticleSystem.init = function init() {
     const canvas = document.getElementById('particle-canvas');
@@ -87,6 +102,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.bindSettings();
     ParticleSystem.setupCanvasMouseTracking();
     ParticleSystem.setupCanvasTouchTracking();
+    ParticleSystem.setupCanvasClickExplosion();
     ParticleSystem.setupWindowResize();
     ParticleSystem.setupVisibilityHandling();
     ParticleSystem.setupPanelEventListeners();
