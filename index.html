@@ -283,6 +283,51 @@
       </div>
     </details>
 
+    <details class="settings-section">
+      <summary class="section-summary">
+        <span>Соединения</span>
+        <span class="section-hint">Линии между частицами</span>
+      </summary>
+      <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Показывать соединения</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="showConnections" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включено</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Дальность соединения</span>
+            <span class="control-value" data-display="connectionDistance">120</span>
+          </div>
+          <input type="range" data-setting="connectionDistance" min="30" max="300" value="120">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Толщина линии</span>
+            <span class="control-value" data-display="connectionWidth">1.0</span>
+          </div>
+          <input type="range" data-setting="connectionWidth" min="0.2" max="5" step="0.1" value="1.0">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Прозрачность линий</span>
+            <span class="control-value" data-display="connectionOpacity">0.30</span>
+          </div>
+          <input type="range" data-setting="connectionOpacity" min="0" max="1" step="0.01" value="0.3">
+        </div>
+      </div>
+    </details>
+
     <button id="settings-reset" type="button">Сбросить настройки</button>
   </div>
 

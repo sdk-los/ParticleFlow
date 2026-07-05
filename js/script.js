@@ -90,6 +90,10 @@
         backgroundMode: 'gradient',
         backgroundColor: '#1a1a2e',
         backgroundGradientStrength: 0.35,
+        showConnections: true,
+        connectionDistance: 120,
+        connectionWidth: 1,
+        connectionOpacity: 0.3,
       });
 
       const config = { ...DEFAULT_CONFIG };
@@ -112,6 +116,10 @@
             backgroundMode: 'gradient',
             backgroundColor: '#14213d',
             backgroundGradientStrength: 0.2,
+            showConnections: true,
+            connectionDistance: 100,
+            connectionWidth: 0.8,
+            connectionOpacity: 0.2,
           },
         },
         neon: {
@@ -131,6 +139,10 @@
             backgroundMode: 'gradient',
             backgroundColor: '#060b1f',
             backgroundGradientStrength: 0.7,
+            showConnections: true,
+            connectionDistance: 150,
+            connectionWidth: 1.5,
+            connectionOpacity: 0.4,
           },
         },
         storm: {
@@ -150,6 +162,10 @@
             backgroundMode: 'solid',
             backgroundColor: '#030711',
             backgroundGradientStrength: 0.25,
+            showConnections: true,
+            connectionDistance: 180,
+            connectionWidth: 2.0,
+            connectionOpacity: 0.5,
           },
         },
         minimal: {
@@ -169,6 +185,10 @@
             backgroundMode: 'transparent',
             backgroundColor: '#111827',
             backgroundGradientStrength: 0.1,
+            showConnections: false,
+            connectionDistance: 80,
+            connectionWidth: 0.5,
+            connectionOpacity: 0.1,
           },
         },
       });
@@ -320,6 +340,73 @@
           ctx.fill();
           ctx.restore();
         });
+      }
+
+      /* ── Connections (линии между частицами) ── */
+      function drawConnections() {
+        if (!config.showConnections) return;
+
+        const maxDist = config.connectionDistance;
+        const maxDistSq = maxDist * maxDist;
+        const lineWidth = config.connectionWidth;
+        const maxOpacity = config.connectionOpacity;
+
+        /* Пространственная сетка: разбиваем канвас на ячейки размером maxDist */
+        const cols = Math.ceil(canvasBounds.width / maxDist) || 1;
+        const rows = Math.ceil(canvasBounds.height / maxDist) || 1;
+        const grid = new Array(cols * rows);
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p._gridId = i;
+          const col = Math.min(Math.floor(p.x / maxDist), cols - 1);
+          const row = Math.min(Math.floor(p.y / maxDist), rows - 1);
+          const idx = row * cols + col;
+          if (!grid[idx]) grid[idx] = [];
+          grid[idx].push(p);
+        }
+
+        /* Собираем все линии в один path для batch-отрисовки */
+        let connectionCount = 0;
+        ctx.beginPath();
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const col = Math.min(Math.floor(p.x / maxDist), cols - 1);
+          const row = Math.min(Math.floor(p.y / maxDist), rows - 1);
+
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const nr = row + dr;
+              const nc = col + dc;
+              if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+
+              const cell = grid[nr * cols + nc];
+              if (!cell) continue;
+
+              for (let k = 0; k < cell.length; k++) {
+                const neighbor = cell[k];
+                if (neighbor._gridId <= p._gridId) continue;
+
+                const dx = neighbor.x - p.x;
+                const dy = neighbor.y - p.y;
+                const distSq = dx * dx + dy * dy;
+
+                if (distSq < maxDistSq) {
+                  ctx.moveTo(p.x, p.y);
+                  ctx.lineTo(neighbor.x, neighbor.y);
+                  connectionCount++;
+                }
+              }
+            }
+          }
+        }
+
+        if (connectionCount > 0) {
+          ctx.strokeStyle = `rgba(255, 255, 255, ${maxOpacity})`;
+          ctx.lineWidth = lineWidth;
+          ctx.stroke();
+        }
       }
 
       /* ── Canvas sizing ── */
@@ -504,6 +591,10 @@
         backgroundMode: renderBackground,
         backgroundColor: renderBackground,
         backgroundGradientStrength: renderBackground,
+        showConnections: null,
+        connectionDistance: null,
+        connectionWidth: null,
+        connectionOpacity: null,
       };
 
       function applySettings(key) {
@@ -546,6 +637,7 @@
       function animate(timestamp) {
         renderBackground();
         drawPointerTrails(timestamp);
+        drawConnections();
         particles.forEach((p) => {
           p.update();
           p.draw();
