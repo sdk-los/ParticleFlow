@@ -20,6 +20,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.explosionParticles = ParticleSystem.explosionParticles.filter((p) => p.update());
     ParticleSystem.explosionParticles.forEach((p) => p.draw());
     ParticleSystem.updateFpsIndicator(timestamp);
+    ParticleSystem.updateParticleCountIndicator();
     ParticleSystem.animationId = requestAnimationFrame(ParticleSystem.animate);
   };
 
@@ -65,10 +66,30 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (fpsIndicator) fpsIndicator.textContent = 'FPS: 0';
   };
 
+  ParticleSystem.updateParticleCountIndicator = function updateParticleCountIndicator() {
+    const countIndicator = document.getElementById('particle-count-indicator');
+    if (!countIndicator) return;
+
+    const totalCount = ParticleSystem.particles.length + (ParticleSystem.explosionParticles?.length || 0);
+    countIndicator.textContent = `Particles: ${totalCount}`;
+    countIndicator.hidden = !config.showParticleCount;
+  };
+
+  ParticleSystem.syncParticleCountIndicator = function syncParticleCountIndicator() {
+    const countIndicator = document.getElementById('particle-count-indicator');
+
+    if (countIndicator) {
+      countIndicator.hidden = !config.showParticleCount;
+      const totalCount = ParticleSystem.particles.length + (ParticleSystem.explosionParticles?.length || 0);
+      countIndicator.textContent = `Particles: ${totalCount}`;
+    }
+  };
+
   ParticleSystem.syncFpsIndicator = function syncFpsIndicator() {
     const fpsIndicator = document.getElementById('fps-indicator');
     if (!fpsIndicator) return;
     fpsIndicator.hidden = !config.showFps;
     ParticleSystem.resetFpsCounter();
+    ParticleSystem.syncParticleCountIndicator();
   };
 })();

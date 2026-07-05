@@ -214,6 +214,19 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.createExplosion = function createExplosion(x, y) {
     if (!config.explosionEnabled) return;
     const count = config.explosionCount;
+
+    if (config.explosionMode === 'spawn') {
+      for (let i = 0; i < count; i++) {
+        const particle = new ParticleSystem.Particle(x, y);
+        const angle = Math.random() * CONSTANTS.TAU;
+        const speed = config.explosionSpeed * (0.5 + Math.random() * 0.8);
+        particle.vx = Math.cos(angle) * speed;
+        particle.vy = Math.sin(angle) * speed;
+        ParticleSystem.particles.push(particle);
+      }
+      return;
+    }
+
     for (let i = 0; i < count; i++) {
       ParticleSystem.explosionParticles.push(new ExplosionParticle(x, y));
     }

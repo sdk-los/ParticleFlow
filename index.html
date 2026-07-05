@@ -34,7 +34,10 @@
 <body>
 
     <canvas id="particle-canvas"></canvas>
-  <div id="fps-indicator" hidden>FPS: 0</div>
+  <div id="hud-indicators">
+    <div id="fps-indicator" hidden>FPS: 0</div>
+    <div id="particle-count-indicator" hidden>Particles: 0</div>
+  </div>
 
   <!-- Кнопка-шестерёнка -->
   <button id="settings-toggle" title="Настройки">⚙️</button>
@@ -183,11 +186,21 @@
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
-              <input type="checkbox" data-setting="explosionEnabled" checked>
+              <input type="checkbox" data-setting="explosionEnabled">
               <span class="slider"></span>
             </label>
             <span class="toggle-label">Включены</span>
           </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Режим взрыва</span>
+          </div>
+          <select data-setting="explosionMode" class="select-control">
+            <option value="burst">Вспышка (исчезают)</option>
+            <option value="spawn">Рождение (остаются)</option>
+          </select>
         </div>
 
         <div class="control-group">
@@ -333,6 +346,19 @@
             <span class="toggle-label">Выключено</span>
           </div>
         </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Показывать количество частиц</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="showParticleCount">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Выключено</span>
+          </div>
+        </div>
       </div>
     </details>
 
@@ -348,7 +374,7 @@
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
-              <input type="checkbox" data-setting="showConnections" checked>
+              <input type="checkbox" data-setting="showConnections">
               <span class="slider"></span>
             </label>
             <span class="toggle-label">Включено</span>

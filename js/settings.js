@@ -23,12 +23,14 @@ window.ParticleSystem = window.ParticleSystem || {};
     connectionDistance: null,
     connectionWidth: null,
     connectionOpacity: null,
+    showParticleCount: null,
     /* ── Взрывы по клику ── */
     explosionEnabled: null,
     explosionCount: null,
     explosionSpeed: null,
     explosionLifetime: null,
     explosionSize: null,
+    explosionMode: null,
   };
 
   ParticleSystem.applySettings = function applySettings(key) {
@@ -59,7 +61,9 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.getToggleLabelText = function getToggleLabelText(key, checked) {
-    if (key === 'bounce') return checked ? 'Включено' : 'Выключено';
+    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps') {
+      return checked ? 'Включено' : 'Выключено';
+    }
     return checked ? 'Включена' : 'Выключена';
   };
 
@@ -180,7 +184,7 @@ window.ParticleSystem = window.ParticleSystem || {};
 
     config[key] = value;
     if (key === 'colorPalette') ParticleSystem.syncCustomPaletteVisibility();
-    if (key === 'showFps') ParticleSystem.syncFpsIndicator();
+    if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);
     ParticleSystem.syncPresetButtons();
     ParticleSystem.saveSettings();

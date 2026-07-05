@@ -20,19 +20,21 @@ window.ParticleSystem = window.ParticleSystem || {};
     pulsate: true,
     bounce: true,
     showFps: false,
+    showParticleCount: false,
     backgroundMode: 'gradient',
     backgroundColor: '#1a1a2e',
     backgroundGradientStrength: 0.35,
-    showConnections: true,
+    showConnections: false,
     connectionDistance: 120,
     connectionWidth: 1,
     connectionOpacity: 0.3,
     /* ── Взрывы по клику ── */
-    explosionEnabled: true,
+    explosionEnabled: false,
     explosionCount: 30,
     explosionSpeed: 6,
     explosionLifetime: 1000,
     explosionSize: 4,
+    explosionMode: 'burst',
   });
 
   ParticleSystem.SETTINGS_PRESETS = Object.freeze({
@@ -53,7 +55,6 @@ window.ParticleSystem = window.ParticleSystem || {};
         backgroundMode: 'gradient',
         backgroundColor: '#14213d',
         backgroundGradientStrength: 0.2,
-        showConnections: true,
         connectionDistance: 100,
         connectionWidth: 0.8,
         connectionOpacity: 0.2,
@@ -76,7 +77,6 @@ window.ParticleSystem = window.ParticleSystem || {};
         backgroundMode: 'gradient',
         backgroundColor: '#060b1f',
         backgroundGradientStrength: 0.7,
-        showConnections: true,
         connectionDistance: 150,
         connectionWidth: 1.5,
         connectionOpacity: 0.4,
@@ -99,7 +99,6 @@ window.ParticleSystem = window.ParticleSystem || {};
         backgroundMode: 'solid',
         backgroundColor: '#030711',
         backgroundGradientStrength: 0.25,
-        showConnections: true,
         connectionDistance: 180,
         connectionWidth: 2.0,
         connectionOpacity: 0.5,
@@ -122,7 +121,6 @@ window.ParticleSystem = window.ParticleSystem || {};
         backgroundMode: 'transparent',
         backgroundColor: '#111827',
         backgroundGradientStrength: 0.1,
-        showConnections: false,
         connectionDistance: 80,
         connectionWidth: 0.5,
         connectionOpacity: 0.1,
@@ -154,6 +152,9 @@ window.ParticleSystem = window.ParticleSystem || {};
     const defaultValue = ParticleSystem.DEFAULT_CONFIG[key];
     if (typeof defaultValue === 'boolean') {
       return typeof value === 'boolean' ? value : defaultValue;
+    }
+    if (typeof defaultValue === 'string') {
+      return typeof value === 'string' ? value : defaultValue;
     }
     if (key === 'colorPalette') {
       return Object.prototype.hasOwnProperty.call(COLOR_PALETTES, value)

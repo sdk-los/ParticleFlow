@@ -19,10 +19,18 @@
       touch-action: none;
     }
 
-    #fps-indicator {
+    #hud-indicators {
       position: fixed;
       top: 20px;
       left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1002;
+    }
+
+    #fps-indicator,
+    #particle-count-indicator {
       min-width: 74px;
       padding: 7px 10px;
       border: 1px solid rgba(10, 207, 131, 0.28);
@@ -39,10 +47,10 @@
       box-shadow: 0 0 16px rgba(10, 207, 131, 0.12);
       pointer-events: none;
       user-select: none;
-      z-index: 1002;
     }
 
-    #fps-indicator[hidden] {
+    #fps-indicator[hidden],
+    #particle-count-indicator[hidden] {
       display: none;
     }
 

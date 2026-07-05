@@ -5,6 +5,8 @@ window.ParticleSystem = window.ParticleSystem || {};
   const { ParticleSystem, ParticleSystem: { CONSTANTS, config } } = window;
 
   /* ── Event listeners ── */
+  ParticleSystem.ignoreNextCanvasClick = false;
+
   ParticleSystem.setupCanvasMouseTracking = function setupCanvasMouseTracking() {
     const canvas = document.getElementById('particle-canvas');
     canvas.addEventListener('mousemove', (e) => {
@@ -23,6 +25,7 @@ window.ParticleSystem = window.ParticleSystem || {};
         const touch = e.touches[0];
         if (!touch) return;
         ParticleSystem.updatePointerPosition(touch.clientX, touch.clientY);
+        ParticleSystem.ignoreNextCanvasClick = true;
         ParticleSystem.createExplosion(
           touch.clientX - canvas.getBoundingClientRect().left,
           touch.clientY - canvas.getBoundingClientRect().top
@@ -81,6 +84,11 @@ window.ParticleSystem = window.ParticleSystem || {};
     const canvas = document.getElementById('particle-canvas');
 
     canvas.addEventListener('click', (e) => {
+      if (ParticleSystem.ignoreNextCanvasClick) {
+        ParticleSystem.ignoreNextCanvasClick = false;
+        return;
+      }
+
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
