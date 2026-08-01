@@ -3,7 +3,7 @@
  * Кэширует основные файлы при установке для работы офлайн.
  */
 
-const CACHE_NAME = 'particles-v1';
+const CACHE_NAME = 'particleflow-v1';
 const BASE_PATH = new URL('./', self.location.href);
 
 const ASSETS_TO_CACHE = [

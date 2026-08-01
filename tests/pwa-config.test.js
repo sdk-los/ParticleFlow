@@ -9,6 +9,8 @@ const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const serviceWorker = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 
 test('manifest uses a base-relative start URL and standalone display', () => {
+  assert.equal(manifest.name, 'ParticleFlow');
+  assert.equal(manifest.short_name, 'ParticleFlow');
   assert.equal(manifest.start_url, './');
   assert.equal(manifest.scope, './');
   assert.equal(manifest.id, './');
@@ -29,7 +31,7 @@ test('index.html exposes mobile PWA metadata and registers the service worker wi
 });
 
 test('service worker uses a base-relative cache strategy for subpath hosting', () => {
-  assert.match(serviceWorker, /const CACHE_NAME =/);
+  assert.match(serviceWorker, /const CACHE_NAME = 'particleflow-v1';/);
   assert.match(serviceWorker, /new URL\(.*self\.location\.href/);
   assert.match(serviceWorker, /cache\.addAll\(/);
   assert.match(serviceWorker, /event\.request\.mode === 'navigate'/);
