@@ -192,7 +192,8 @@
             <option value="orbit">Орбитальный (индивидуальный)</option>
             <option value="orbitGlobal">Орбита — общая</option>
             <option value="wave">Волновой</option>
-            <option value="spiral">Спиральный</option>
+            <option value="spiral">Спираль — общая</option>
+            <option value="spiralIndividual">Спираль — индивидуальная</option>
           </select>
         </div>
 
@@ -210,6 +211,27 @@
             <span class="control-value" data-display="selfDriftOrbitRadius">0%</span>
           </div>
           <input type="range" data-setting="selfDriftOrbitRadius" min="0" max="100" step="1" value="0">
+        </div>
+
+        <div class="control-group" data-drift-orbit-repel>
+          <div class="control-label">
+            <span>Отталкивание между частицами</span>
+            <span class="control-value" data-display="selfDriftOrbitRepulsionStrength">0.35</span>
+          </div>
+          <input type="range" data-setting="selfDriftOrbitRepulsionStrength" min="0" max="1.2" step="0.01" value="0.35">
+        </div>
+
+        <div class="control-group" data-drift-orbit-repel>
+          <div class="control-label">
+            <span>Включить отталкивание</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="selfDriftOrbitRepulsionEnabled">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Выключено</span>
+          </div>
         </div>
 
         <div class="control-group">

@@ -140,6 +140,31 @@ window.ParticleSystem = window.ParticleSystem || {};
         // Use a conservative correction to avoid runaway velocities
         const desiredVx = (targetX - particle.x) * 0.02;
         const desiredVy = (targetY - particle.y) * 0.02;
+        const repulsionEnabled = config.selfDriftOrbitRepulsionEnabled === true;
+        const repulsionStrength = Number.isFinite(config.selfDriftOrbitRepulsionStrength)
+          ? config.selfDriftOrbitRepulsionStrength
+          : 0.35;
+        if (repulsionEnabled && Array.isArray(ParticleSystem.particles) && ParticleSystem.particles.length > 1) {
+          const repulsionRadius = Math.max(16, 18 + (particle.size || 0) * 2.5);
+          let pushVx = 0;
+          let pushVy = 0;
+          ParticleSystem.particles.forEach((other) => {
+            if (!other || other === particle) return;
+            const dx = particle.x - other.x;
+            const dy = particle.y - other.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+            if (distance >= repulsionRadius || distance === 0) return;
+            const influence = Math.max(0, 1 - distance / repulsionRadius);
+            const force = influence * repulsionStrength * 0.18;
+            pushVx += (dx / distance) * force;
+            pushVy += (dy / distance) * force;
+          });
+          const smooth = 0.25;
+          return {
+            vx: ((desiredVx + pushVx) - (particle.vx || 0)) * smooth,
+            vy: ((desiredVy + pushVy) - (particle.vy || 0)) * smooth,
+          };
+        }
         const smooth = 0.25;
         return {
           vx: (desiredVx - (particle.vx || 0)) * smooth,
@@ -154,11 +179,41 @@ window.ParticleSystem = window.ParticleSystem || {};
       }
 
       case 'spiral': {
-        const spiralRadius = driftStrength * (0.3 + 0.7 * Math.abs(Math.sin(timeAngle * 0.4)));
-        const spiralAngle = timeAngle;
+        const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
+        const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;
+        let baseRadius = Math.max(driftStrength * (2.5 + (particle.size || 0) * 0.12), 16);
+        if (Number.isFinite(config.selfDriftOrbitRadius) && config.selfDriftOrbitRadius > 0) {
+          const fraction = Math.min(Math.max(config.selfDriftOrbitRadius / 100, 0), 1);
+          baseRadius = Math.max(fraction * Math.min(cx, cy), 8);
+        }
+        const anchorX = particle.anchorX || particle.x;
+        const anchorY = particle.anchorY || particle.y;
+        const spiralAngle = (timeAngle * 0.35) + (particle.driftPhase || 0) + (anchorY * 0.0008);
+        const spiralRadius = baseRadius * (0.45 + 0.55 * Math.abs(Math.sin(spiralAngle * 0.6)));
+        const targetX = cx + Math.cos(spiralAngle) * spiralRadius + (anchorX - cx) * 0.02;
+        const targetY = cy + Math.sin(spiralAngle) * spiralRadius + (anchorY - cy) * 0.02;
+        const desiredVx = (targetX - particle.x) * 0.02;
+        const desiredVy = (targetY - particle.y) * 0.02;
+        const smooth = 0.25;
         return {
-          vx: Math.cos(spiralAngle) * spiralRadius,
-          vy: Math.sin(spiralAngle) * spiralRadius,
+          vx: (desiredVx - (particle.vx || 0)) * smooth,
+          vy: (desiredVy - (particle.vy || 0)) * smooth,
+        };
+      }
+
+      case 'spiralIndividual': {
+        const anchorX = particle.anchorX || particle.x;
+        const anchorY = particle.anchorY || particle.y;
+        const spiralAngle = (timeAngle * 0.35) + (particle.driftPhase || 0) + (anchorY * 0.001);
+        const spiralRadius = Math.max(driftStrength * (0.8 + (particle.size || 0) * 0.18), 8);
+        const targetX = anchorX + Math.cos(spiralAngle) * spiralRadius;
+        const targetY = anchorY + Math.sin(spiralAngle) * spiralRadius;
+        const desiredVx = (targetX - particle.x) * 0.02;
+        const desiredVy = (targetY - particle.y) * 0.02;
+        const smooth = 0.25;
+        return {
+          vx: (desiredVx - (particle.vx || 0)) * smooth,
+          vy: (desiredVy - (particle.vy || 0)) * smooth,
         };
       }
 

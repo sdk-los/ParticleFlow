@@ -377,6 +377,22 @@
       display: block;
     }
 
+    [data-drift-orbit] {
+      display: none;
+    }
+
+    [data-drift-orbit].visible {
+      display: block;
+    }
+
+    [data-drift-orbit-repel] {
+      display: none;
+    }
+
+    [data-drift-orbit-repel].visible {
+      display: block;
+    }
+
     .color-controls {
       display: grid;
       grid-template-columns: repeat(3, 1fr);

@@ -82,14 +82,14 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   /* ── Display helpers ── */
   ParticleSystem.formatDisplayValue = function formatDisplayValue(key, value) {
-    if (key === 'attractionForce' || key === 'trailOpacity' || key === 'selfDriftIntensity') return value.toFixed(2);
+    if (key === 'attractionForce' || key === 'trailOpacity' || key === 'selfDriftIntensity' || key === 'selfDriftOrbitRepulsionStrength') return value.toFixed(2);
     if (key === 'speedMultiplier' || key === 'selfDriftSpeed') return value.toFixed(1);
     if (key === 'selfDriftOrbitRadius') return Math.round(value) + '%';
     return String(value);
   };
 
   ParticleSystem.getToggleLabelText = function getToggleLabelText(key, checked) {
-    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps' || key === 'selfDriftEnabled' || key === 'cursorInteractionEnabled') {
+    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps' || key === 'selfDriftEnabled' || key === 'selfDriftOrbitRepulsionEnabled' || key === 'cursorInteractionEnabled') {
       return checked ? 'Включена' : 'Выключена';
     }
     return checked ? 'Включены' : 'Выключены';
@@ -158,8 +158,19 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (!group) return;
     group.classList.toggle(
       CONSTANTS.CSS_VISIBLE_CLASS,
-      config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal'
+      config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal' || config.selfDriftMode === 'spiral' || config.selfDriftMode === 'spiralIndividual'
     );
+  };
+
+  ParticleSystem.syncDriftOrbitRepulsionVisibility = function syncDriftOrbitRepulsionVisibility() {
+    const groups = document.getElementById('settings-panel').querySelectorAll('[data-drift-orbit-repel]');
+    if (!groups.length) return;
+    groups.forEach((group) => {
+      group.classList.toggle(
+        CONSTANTS.CSS_VISIBLE_CLASS,
+        config.selfDriftMode === 'orbitGlobal'
+      );
+    });
   };
 
   /* ── Input handlers ── */
@@ -212,6 +223,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.syncCustomPaletteVisibility();
     ParticleSystem.syncDriftDirectionVisibility();
     ParticleSystem.syncDriftOrbitVisibility();
+    ParticleSystem.syncDriftOrbitRepulsionVisibility();
     ParticleSystem.syncPresetButtons();
     ParticleSystem.syncFpsIndicator();
   };
@@ -234,6 +246,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'colorPalette') ParticleSystem.syncCustomPaletteVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftDirectionVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitVisibility();
+    if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitRepulsionVisibility();
     if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);
     ParticleSystem.syncPresetButtons();
