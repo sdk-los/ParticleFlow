@@ -98,21 +98,35 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   /* ── Orientation lock ── */
   ParticleSystem.lockOrientation = function lockOrientation() {
-    // Пытаемся заблокировать ориентацию в портретном режиме.
-    // Если в телефоне включено ограничение на поворот (блокировка),
-    // orientation.lock('portrait-primary') либо сработает, либо будет
-    // отклонён — в любом случае автоповорот не включится самовольно.
-    // Если же ограничение выключено, пользователь всё равно сможет
-    // повернуть телефон — блокировка снимется при закрытии PWA.
     if (!screen.orientation || typeof screen.orientation.lock !== 'function') return;
 
-    screen.orientation.lock('portrait-primary').catch(() => {
-      // Блокировка может быть отклонена по разным причинам:
-      // - системное ограничение на поворот уже активно
-      // - устройство не поддерживает блокировку
-      // - вызов из неполноэкранного режима
-      // Это ожидаемое поведение, ничего страшного.
+    const tryLock = () => {
+      screen.orientation.lock('portrait-primary').catch(() => {
+        // На мобильных браузерах блокировка часто отклоняется, если страница
+        // открыта не в standalone/fullscreen режиме или в момент запуска.
+        // Повторяем попытку позже, когда ориентация и состояние страницы станут стабильнее.
+      });
+    };
+
+    tryLock();
+    window.setTimeout(tryLock, 250);
+  };
+
+  ParticleSystem.setupOrientationLock = function setupOrientationLock() {
+    const handleOrientationChange = () => ParticleSystem.lockOrientation();
+    const handleFirstInteraction = () => ParticleSystem.lockOrientation();
+
+    window.addEventListener('orientationchange', handleOrientationChange);
+    window.addEventListener('pageshow', handleOrientationChange);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) ParticleSystem.lockOrientation();
     });
+
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    ParticleSystem.lockOrientation();
   };
 
   /* ── Init ── */
@@ -133,7 +147,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.setupWindowResize();
     ParticleSystem.setupVisibilityHandling();
     ParticleSystem.setupPanelEventListeners();
-    ParticleSystem.lockOrientation();
+    ParticleSystem.setupOrientationLock();
   };
 
   ParticleSystem.init();
