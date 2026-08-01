@@ -96,6 +96,25 @@ window.ParticleSystem = window.ParticleSystem || {};
     });
   };
 
+  /* ── Orientation lock ── */
+  ParticleSystem.lockOrientation = function lockOrientation() {
+    // Пытаемся заблокировать ориентацию в портретном режиме.
+    // Если в телефоне включено ограничение на поворот (блокировка),
+    // orientation.lock('portrait-primary') либо сработает, либо будет
+    // отклонён — в любом случае автоповорот не включится самовольно.
+    // Если же ограничение выключено, пользователь всё равно сможет
+    // повернуть телефон — блокировка снимется при закрытии PWA.
+    if (!screen.orientation || typeof screen.orientation.lock !== 'function') return;
+
+    screen.orientation.lock('portrait-primary').catch(() => {
+      // Блокировка может быть отклонена по разным причинам:
+      // - системное ограничение на поворот уже активно
+      // - устройство не поддерживает блокировку
+      // - вызов из неполноэкранного режима
+      // Это ожидаемое поведение, ничего страшного.
+    });
+  };
+
   /* ── Init ── */
   ParticleSystem.init = function init() {
     const canvas = document.getElementById('particle-canvas');
@@ -114,6 +133,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.setupWindowResize();
     ParticleSystem.setupVisibilityHandling();
     ParticleSystem.setupPanelEventListeners();
+    ParticleSystem.lockOrientation();
   };
 
   ParticleSystem.init();

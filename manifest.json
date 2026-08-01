@@ -1,12 +1,12 @@
 {
   "name": "Система частиц",
-  "short_name": "Particles",
+  "short_name": "ParticleFlow",
   "description": "Интерактивная система частиц с настройками",
   "start_url": "/ParticleFlow/",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#1a1a2e",
-  "orientation": "any",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icons/icon-192.png",
