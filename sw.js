@@ -4,15 +4,24 @@
  */
 
 const CACHE_NAME = 'particles-v1';
+const BASE_PATH = new URL('./', self.location.href);
 
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/script.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  new URL('./', self.location.href).href,
+  new URL('./index.html', self.location.href).href,
+  new URL('./css/style.css', self.location.href).href,
+  new URL('./js/constants.js', self.location.href).href,
+  new URL('./js/config.js', self.location.href).href,
+  new URL('./js/utils.js', self.location.href).href,
+  new URL('./js/particle.js', self.location.href).href,
+  new URL('./js/renderer.js', self.location.href).href,
+  new URL('./js/pointer.js', self.location.href).href,
+  new URL('./js/settings.js', self.location.href).href,
+  new URL('./js/animation.js', self.location.href).href,
+  new URL('./js/main.js', self.location.href).href,
+  new URL('./manifest.json', self.location.href).href,
+  new URL('./icons/icon-192.png', self.location.href).href,
+  new URL('./icons/icon-512.png', self.location.href).href,
 ];
 
 // Установка — кэшируем основные файлы
@@ -43,6 +52,19 @@ self.addEventListener('activate', (event) => {
 
 // Перехват запросов — сначала кэш, потом сеть
 self.addEventListener('fetch', (event) => {
+  const requestUrl = new URL(event.request.url);
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  if (requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       // Если есть в кэше — возвращаем
