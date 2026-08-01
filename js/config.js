@@ -212,7 +212,7 @@ window.ParticleSystem = window.ParticleSystem || {};
         : defaultValue;
     }
     if (key === 'selfDriftMode') {
-      return ['random', 'horizontal', 'vertical', 'upDown', 'leftRight', 'up', 'down', 'left', 'right', 'directional', 'orbit', 'orbitGlobal', 'wave', 'spiral', 'spiralIndividual'].includes(value)
+      return ['random', 'horizontal', 'vertical', 'upDown', 'leftRight', 'up', 'down', 'left', 'right', 'directional', 'orbit', 'orbitGlobal', 'wave', 'spiral', 'spiralIndividual', 'snake'].includes(value)
         ? value
         : defaultValue;
     }

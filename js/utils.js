@@ -217,6 +217,41 @@ window.ParticleSystem = window.ParticleSystem || {};
         };
       }
 
+      case 'snake': {
+        const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
+        const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;
+        // Увеличенные коэффициенты для более выраженной орбиты (режим "Змейка")
+        const baseRadius = Math.max(driftStrength * (6 + (particle.size || 0) * 0.25), 40);
+        const R = Math.min(baseRadius, Math.min(cx, cy) * 0.6);
+        // Полуокружности делаем больше долей от R, чтобы визуально траектория была крупнее
+        const halfR = R * 0.8;
+
+        // Фаза: t ∈ [0, 4π) — полный цикл по S-подобной кривой (snake)
+        const t = (timeAngle * 0.45 + (particle.driftPhase || 0)) % (Math.PI * 4);
+
+        let targetX, targetY;
+
+        if (t < Math.PI * 2) {
+          // Верхняя полуокружность: от центра (t=0) к верхней точке (t=π) и обратно к центру (t=2π)
+          const angle = t;
+          targetX = cx + halfR * Math.sin(angle);
+          targetY = (cy - halfR) + halfR * Math.cos(angle);
+        } else {
+          // Нижняя полуокружность: от центра (t=2π) к нижней точке (t=3π) и обратно к центру (t=4π)
+          const angle = t - Math.PI * 2;
+          targetX = cx + halfR * Math.sin(angle + Math.PI);
+          targetY = (cy + halfR) + halfR * Math.cos(angle + Math.PI);
+        }
+
+        const desiredVx = (targetX - particle.x) * 0.02;
+        const desiredVy = (targetY - particle.y) * 0.02;
+        const smooth = 0.25;
+        return {
+          vx: (desiredVx - (particle.vx || 0)) * smooth,
+          vy: (desiredVy - (particle.vy || 0)) * smooth,
+        };
+      }
+
       default: // 'random'
         return {
           vx: Math.cos(timeAngle) * driftStrength,

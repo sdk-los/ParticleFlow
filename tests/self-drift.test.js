@@ -126,3 +126,33 @@ test('orbitGlobal self-drift can push nearby particles apart when repulsion is e
 
   assert.ok(Math.abs(drift.vx) > 0.0001 || Math.abs(drift.vy) > 0.0001);
 });
+
+test('snake self-drift returns numeric vx/vy', () => {
+  const ParticleSystem = loadUtils();
+  ParticleSystem.config.selfDriftMode = 'snake';
+  ParticleSystem.canvasBounds = { width: 400, height: 300 };
+
+  const particle = { x: 200, y: 150, vx: 0, vy: 0, size: 3, driftPhase: 0.12 };
+  const intensity = 0.08;
+  const speed = 0.5;
+  const time = 1000;
+
+  const drift = ParticleSystem.calculateSelfDrift(particle, time, intensity, speed);
+  assert.strictEqual(typeof drift.vx, 'number');
+  assert.strictEqual(typeof drift.vy, 'number');
+});
+
+test('snake drift changes with time', () => {
+  const ParticleSystem = loadUtils();
+  ParticleSystem.config.selfDriftMode = 'snake';
+  ParticleSystem.canvasBounds = { width: 400, height: 300 };
+
+  const particle = { x: 100, y: 80, vx: 0, vy: 0, size: 2, driftPhase: 0.2 };
+  const intensity = 0.08;
+  const speed = 0.5;
+
+  const a = ParticleSystem.calculateSelfDrift(particle, 1000, intensity, speed);
+  const b = ParticleSystem.calculateSelfDrift(particle, 2000, intensity, speed);
+
+  assert.ok(a.vx !== b.vx || a.vy !== b.vy);
+});
