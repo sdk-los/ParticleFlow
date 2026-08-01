@@ -2,7 +2,7 @@
   "name": "Система частиц",
   "short_name": "Particles",
   "description": "Интерактивная система частиц с настройками",
-  "start_url": "/effects-site/",
+  "start_url": "/ParticleFlow/",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#1a1a2e",

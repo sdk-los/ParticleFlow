@@ -1,5 +1,5 @@
 /**
- * Service Worker для PWA "Система частиц"
+ * Service Worker для PWA "ParticleFlow"
  * Кэширует основные файлы при установке для работы офлайн.
  */
 
