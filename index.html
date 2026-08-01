@@ -149,6 +149,59 @@
 
         <div class="control-group">
           <div class="control-label">
+            <span>Само-дрейф</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="selfDriftEnabled">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Выключено</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Сила дрейфа</span>
+            <span class="control-value" data-display="selfDriftIntensity">0.08</span>
+          </div>
+          <input type="range" data-setting="selfDriftIntensity" min="0" max="1" step="0.01" value="0.08">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Скорость дрейфа</span>
+            <span class="control-value" data-display="selfDriftSpeed">0.50</span>
+          </div>
+          <input type="range" data-setting="selfDriftSpeed" min="0.1" max="3" step="0.1" value="0.5">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Режим дрейфа</span>
+          </div>
+          <select data-setting="selfDriftMode" class="select-control">
+            <option value="random">Случайный</option>
+            <option value="leftRight">Влево-вправо</option>
+            <option value="upDown">Вверх-вниз</option>
+            <option value="up">Только вверх</option>
+            <option value="down">Только вниз</option>
+            <option value="left">Только влево</option>
+            <option value="right">Только вправо</option>
+            <option value="directional">Направленный (угол)</option>
+          </select>
+        </div>
+
+        <div class="control-group" data-drift-direction>
+          <div class="control-label">
+            <span>Направление (градусы)</span>
+            <span class="control-value" data-display="selfDriftDirection">0</span>
+          </div>
+          <input type="range" data-setting="selfDriftDirection" min="0" max="360" value="0">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
             <span>Отражение от границ</span>
           </div>
           <div class="toggle-wrapper">
@@ -168,6 +221,19 @@
         <span class="section-hint">Взаимодействие</span>
       </summary>
       <div class="section-body">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Реакция на курсор</span>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="cursorInteractionEnabled" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включена</span>
+          </div>
+        </div>
+
         <div class="control-group">
           <div class="control-label">
             <span>Сила взаимодействия</span>

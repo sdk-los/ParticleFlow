@@ -369,6 +369,14 @@
       display: block;
     }
 
+    [data-drift-direction] {
+      display: none;
+    }
+
+    [data-drift-direction].visible {
+      display: block;
+    }
+
     .color-controls {
       display: grid;
       grid-template-columns: repeat(3, 1fr);

@@ -9,11 +9,17 @@ window.ParticleSystem = window.ParticleSystem || {};
     particleSize: 4,
     particleShape: 'circle',
     speedMultiplier: 1.0,
+    selfDriftEnabled: false,
+    selfDriftIntensity: 0.08,
+    selfDriftSpeed: 0.5,
+    selfDriftMode: 'random',
+    selfDriftDirection: 0,
     hue: 130,
     colorPalette: 'mono',
     customColor1: '#0acf83',
     customColor2: '#38bdf8',
     customColor3: '#f97316',
+    cursorInteractionEnabled: true,
     attractionForce: 0.3,
     cursorMode: 'attract',
     attractionRadius: 200,
@@ -52,6 +58,9 @@ window.ParticleSystem = window.ParticleSystem || {};
         particleCount: 110,
         particleSize: 3,
         speedMultiplier: 0.4,
+        selfDriftEnabled: false,
+        selfDriftIntensity: 0.04,
+        selfDriftSpeed: 0.3,
         hue: 205,
         colorPalette: 'cool',
         attractionForce: 0.15,
@@ -77,6 +86,11 @@ window.ParticleSystem = window.ParticleSystem || {};
         particleCount: 240,
         particleSize: 4,
         speedMultiplier: 1.4,
+        selfDriftEnabled: true,
+        selfDriftIntensity: 0.15,
+        selfDriftSpeed: 1.1,
+        selfDriftMode: 'random',
+        selfDriftDirection: 0,
         hue: 130,
         colorPalette: 'neon',
         attractionForce: 0.35,
@@ -102,6 +116,11 @@ window.ParticleSystem = window.ParticleSystem || {};
         particleCount: 220,
         particleSize: 5,
         speedMultiplier: 2.2,
+        selfDriftEnabled: true,
+        selfDriftIntensity: 0.2,
+        selfDriftSpeed: 1.6,
+        selfDriftMode: 'random',
+        selfDriftDirection: 0,
         hue: 265,
         colorPalette: 'rainbow',
         attractionForce: 0.75,
@@ -127,6 +146,9 @@ window.ParticleSystem = window.ParticleSystem || {};
         particleCount: 55,
         particleSize: 2,
         speedMultiplier: 0.5,
+        selfDriftEnabled: false,
+        selfDriftIntensity: 0.03,
+        selfDriftSpeed: 0.2,
         hue: 160,
         colorPalette: 'mono',
         attractionForce: 0.1,
@@ -183,6 +205,11 @@ window.ParticleSystem = window.ParticleSystem || {};
     }
     if (key === 'cursorMode') {
       return Object.prototype.hasOwnProperty.call(CURSOR_MODES, value)
+        ? value
+        : defaultValue;
+    }
+    if (key === 'selfDriftMode') {
+      return ['random', 'horizontal', 'vertical', 'upDown', 'leftRight', 'up', 'down', 'left', 'right', 'directional'].includes(value)
         ? value
         : defaultValue;
     }

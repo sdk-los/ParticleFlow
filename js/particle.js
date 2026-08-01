@@ -18,6 +18,7 @@ window.ParticleSystem = window.ParticleSystem || {};
       this.shadowBlur = config.shadowBlur;
       this.vx = ParticleSystem.randomBetween(-SPEED_VARIANCE, SPEED_VARIANCE) * config.speedMultiplier;
       this.vy = ParticleSystem.randomBetween(-SPEED_VARIANCE, SPEED_VARIANCE) * config.speedMultiplier;
+      this.driftPhase = ParticleSystem.randomBetween(0, CONSTANTS.TAU);
       this.trail = [];
       this.maxTrailLength = config.trailLength;
     }
@@ -48,8 +49,22 @@ window.ParticleSystem = window.ParticleSystem || {};
       ParticleSystem.drawShape(ctx, this.x, this.y, this.size, config.particleShape);
     }
 
+    applySelfDrift() {
+      if (!config.selfDriftEnabled) return;
+
+      const drift = ParticleSystem.calculateSelfDrift(
+        this,
+        performance.now(),
+        config.selfDriftIntensity,
+        config.selfDriftSpeed
+      );
+
+      this.vx += drift.vx;
+      this.vy += drift.vy;
+    }
+
     applyCursorInteraction() {
-      if (config.cursorMode === 'trail' || !ParticleSystem.isPointerActive()) return;
+      if (!config.cursorInteractionEnabled || config.cursorMode === 'trail' || !ParticleSystem.isPointerActive()) return;
 
       const dist = ParticleSystem.distance(this.x, this.y, ParticleSystem.mouseX, ParticleSystem.mouseY);
       if (dist >= config.attractionRadius || dist === 0) return;
@@ -121,6 +136,7 @@ window.ParticleSystem = window.ParticleSystem || {};
       
       this.x += this.vx;
       this.y += this.vy;
+      this.applySelfDrift();
       this.applyCursorInteraction();
       this.applyFriction();
       this.handleBoundaries();

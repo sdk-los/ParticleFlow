@@ -39,6 +39,79 @@ window.ParticleSystem = window.ParticleSystem || {};
     return [(intValue >> 16) & 255, (intValue >> 8) & 255, intValue & 255];
   };
 
+  ParticleSystem.calculateSelfDrift = function calculateSelfDrift(particle, time, intensity, speed) {
+    if (!particle || !Number.isFinite(intensity) || !Number.isFinite(speed)) {
+      return { vx: 0, vy: 0 };
+    }
+
+    const driftStrength = intensity * (0.3 + (particle.size || 0) * 0.04);
+    const timeAngle = (time * 0.001 * speed) + particle.driftPhase + particle.y * 0.001;
+
+    switch (config.selfDriftMode) {
+      case 'horizontal':
+        return {
+          vx: Math.cos(timeAngle) * driftStrength,
+          vy: 0,
+        };
+
+      case 'vertical':
+        return {
+          vx: 0,
+          vy: Math.sin(timeAngle) * driftStrength,
+        };
+
+      case 'upDown':
+        return {
+          vx: 0,
+          vy: Math.sin(timeAngle) * driftStrength,
+        };
+
+      case 'leftRight':
+        return {
+          vx: Math.cos(timeAngle) * driftStrength,
+          vy: 0,
+        };
+
+      case 'up':
+        return {
+          vx: 0,
+          vy: -Math.abs(Math.sin(timeAngle)) * driftStrength,
+        };
+
+      case 'down':
+        return {
+          vx: 0,
+          vy: Math.abs(Math.sin(timeAngle)) * driftStrength,
+        };
+
+      case 'left':
+        return {
+          vx: -Math.abs(Math.cos(timeAngle)) * driftStrength,
+          vy: 0,
+        };
+
+      case 'right':
+        return {
+          vx: Math.abs(Math.cos(timeAngle)) * driftStrength,
+          vy: 0,
+        };
+
+      case 'directional': {
+        const fixedAngle = config.selfDriftDirection * Math.PI / 180;
+        return {
+          vx: Math.cos(fixedAngle) * driftStrength,
+          vy: Math.sin(fixedAngle) * driftStrength,
+        };
+      }
+
+      default: // 'random'
+        return {
+          vx: Math.cos(timeAngle) * driftStrength,
+          vy: Math.sin(timeAngle) * driftStrength,
+        };
+    }
+  };
+
   ParticleSystem.getBackgroundAccentColor = function getBackgroundAccentColor() {
     const [r, g, b] = ParticleSystem.hexToRgb(config.backgroundColor);
     const mix = 0.2 + config.backgroundGradientStrength * 0.45;
