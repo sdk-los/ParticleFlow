@@ -189,6 +189,10 @@
             <option value="left">Только влево</option>
             <option value="right">Только вправо</option>
             <option value="directional">Направленный (угол)</option>
+            <option value="orbit">Орбитальный (индивидуальный)</option>
+            <option value="orbitGlobal">Орбита — общая</option>
+            <option value="wave">Волновой</option>
+            <option value="spiral">Спиральный</option>
           </select>
         </div>
 
@@ -198,6 +202,14 @@
             <span class="control-value" data-display="selfDriftDirection">0</span>
           </div>
           <input type="range" data-setting="selfDriftDirection" min="0" max="360" value="0">
+        </div>
+
+        <div class="control-group" data-drift-orbit>
+          <div class="control-label">
+            <span>Радиус орбиты</span>
+            <span class="control-value" data-display="selfDriftOrbitRadius">0%</span>
+          </div>
+          <input type="range" data-setting="selfDriftOrbitRadius" min="0" max="100" step="1" value="0">
         </div>
 
         <div class="control-group">

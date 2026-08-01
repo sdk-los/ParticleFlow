@@ -84,6 +84,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.formatDisplayValue = function formatDisplayValue(key, value) {
     if (key === 'attractionForce' || key === 'trailOpacity' || key === 'selfDriftIntensity') return value.toFixed(2);
     if (key === 'speedMultiplier' || key === 'selfDriftSpeed') return value.toFixed(1);
+    if (key === 'selfDriftOrbitRadius') return Math.round(value) + '%';
     return String(value);
   };
 
@@ -152,6 +153,15 @@ window.ParticleSystem = window.ParticleSystem || {};
     );
   };
 
+  ParticleSystem.syncDriftOrbitVisibility = function syncDriftOrbitVisibility() {
+    const group = document.getElementById('settings-panel').querySelector('[data-drift-orbit]');
+    if (!group) return;
+    group.classList.toggle(
+      CONSTANTS.CSS_VISIBLE_CLASS,
+      config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal'
+    );
+  };
+
   /* ── Input handlers ── */
   ParticleSystem.handleCheckboxInput = function handleCheckboxInput(input, key) {
     const value = input.checked;
@@ -201,6 +211,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.getSettingsControls().forEach(ParticleSystem.syncControl);
     ParticleSystem.syncCustomPaletteVisibility();
     ParticleSystem.syncDriftDirectionVisibility();
+    ParticleSystem.syncDriftOrbitVisibility();
     ParticleSystem.syncPresetButtons();
     ParticleSystem.syncFpsIndicator();
   };
@@ -222,6 +233,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     config[key] = value;
     if (key === 'colorPalette') ParticleSystem.syncCustomPaletteVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftDirectionVisibility();
+    if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitVisibility();
     if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);
     ParticleSystem.syncPresetButtons();

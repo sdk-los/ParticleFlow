@@ -104,6 +104,64 @@ window.ParticleSystem = window.ParticleSystem || {};
         };
       }
 
+      case 'orbit': {
+        let orbitRadius = Math.max(driftStrength * (1.5 + (particle.size || 0) * 0.12), 8);
+        if (Number.isFinite(config.selfDriftOrbitRadius) && config.selfDriftOrbitRadius > 0) {
+          const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
+          const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;
+          const fraction = Math.min(Math.max(config.selfDriftOrbitRadius / 100, 0), 1);
+          orbitRadius = Math.max(fraction * Math.min(cx, cy), 8);
+        }
+        const orbitAngle = timeAngle * 0.6 + (particle.driftPhase || 0);
+        const targetX = (particle.anchorX || particle.x) + Math.cos(orbitAngle) * orbitRadius;
+        const targetY = (particle.anchorY || particle.y) + Math.sin(orbitAngle) * orbitRadius;
+        // Compute a desired velocity towards the target and return a small correction
+        const desiredVx = (targetX - particle.x) * 0.02;
+        const desiredVy = (targetY - particle.y) * 0.02;
+        const smooth = 0.25;
+        return {
+          vx: (desiredVx - (particle.vx || 0)) * smooth,
+          vy: (desiredVy - (particle.vy || 0)) * smooth,
+        };
+      }
+
+      case 'orbitGlobal': {
+        const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
+        const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;
+        let baseRadius = Math.min(cx, cy) * 0.45 || (driftStrength * (1.5 + (particle.size || 0) * 0.12));
+        if (Number.isFinite(config.selfDriftOrbitRadius) && config.selfDriftOrbitRadius > 0) {
+          const fraction = Math.min(Math.max(config.selfDriftOrbitRadius / 100, 0), 1);
+          baseRadius = Math.max(fraction * Math.min(cx, cy), 8);
+        }
+        const orbitRadius = baseRadius;
+        const orbitAngle = timeAngle * 0.6 + (particle.driftPhase || 0);
+        const targetX = cx + Math.cos(orbitAngle) * orbitRadius;
+        const targetY = cy + Math.sin(orbitAngle) * orbitRadius;
+        // Use a conservative correction to avoid runaway velocities
+        const desiredVx = (targetX - particle.x) * 0.02;
+        const desiredVy = (targetY - particle.y) * 0.02;
+        const smooth = 0.25;
+        return {
+          vx: (desiredVx - (particle.vx || 0)) * smooth,
+          vy: (desiredVy - (particle.vy || 0)) * smooth,
+        };
+      }
+
+      case 'wave': {
+        const waveX = Math.sin(timeAngle + particle.y * 0.005) * driftStrength;
+        const waveY = Math.cos(timeAngle + particle.x * 0.005) * driftStrength;
+        return { vx: waveX, vy: waveY };
+      }
+
+      case 'spiral': {
+        const spiralRadius = driftStrength * (0.3 + 0.7 * Math.abs(Math.sin(timeAngle * 0.4)));
+        const spiralAngle = timeAngle;
+        return {
+          vx: Math.cos(spiralAngle) * spiralRadius,
+          vy: Math.sin(spiralAngle) * spiralRadius,
+        };
+      }
+
       default: // 'random'
         return {
           vx: Math.cos(timeAngle) * driftStrength,

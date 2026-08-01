@@ -19,6 +19,11 @@ window.ParticleSystem = window.ParticleSystem || {};
       this.vx = ParticleSystem.randomBetween(-SPEED_VARIANCE, SPEED_VARIANCE) * config.speedMultiplier;
       this.vy = ParticleSystem.randomBetween(-SPEED_VARIANCE, SPEED_VARIANCE) * config.speedMultiplier;
       this.driftPhase = ParticleSystem.randomBetween(0, CONSTANTS.TAU);
+      this.anchorX = x;
+      this.anchorY = y;
+      const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
+      const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;
+      this.anchorRadius = ParticleSystem.distance(this.anchorX, this.anchorY, cx, cy);
       this.trail = [];
       this.maxTrailLength = config.trailLength;
     }
@@ -133,11 +138,11 @@ window.ParticleSystem = window.ParticleSystem || {};
       if (this.trail.length > this.maxTrailLength) {
         this.trail.shift();
       }
-      
-      this.x += this.vx;
-      this.y += this.vy;
       this.applySelfDrift();
       this.applyCursorInteraction();
+
+      this.x += this.vx;
+      this.y += this.vy;
       this.applyFriction();
       this.handleBoundaries();
       this.updateSize();

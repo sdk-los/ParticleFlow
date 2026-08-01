@@ -12,6 +12,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     selfDriftEnabled: false,
     selfDriftIntensity: 0.08,
     selfDriftSpeed: 0.5,
+    selfDriftOrbitRadius: 0,
     selfDriftMode: 'random',
     selfDriftDirection: 0,
     hue: 130,
@@ -209,7 +210,7 @@ window.ParticleSystem = window.ParticleSystem || {};
         : defaultValue;
     }
     if (key === 'selfDriftMode') {
-      return ['random', 'horizontal', 'vertical', 'upDown', 'leftRight', 'up', 'down', 'left', 'right', 'directional'].includes(value)
+      return ['random', 'horizontal', 'vertical', 'upDown', 'leftRight', 'up', 'down', 'left', 'right', 'directional', 'orbit', 'orbitGlobal', 'wave', 'spiral'].includes(value)
         ? value
         : defaultValue;
     }
