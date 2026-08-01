@@ -7,6 +7,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   /* ── Settings application ── */
   const SETTING_APPLIERS = {
     particleCount: ParticleSystem.createParticles,
+    particleShape: null,
     speedMultiplier: ParticleSystem.updateParticleSpeed,
     particleSize: ParticleSystem.updateParticleSizes,
     hue: ParticleSystem.updateParticleHues,

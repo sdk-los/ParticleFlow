@@ -45,9 +45,7 @@ window.ParticleSystem = window.ParticleSystem || {};
       ctx.fillStyle = this.color;
       ctx.shadowColor = this.color;
       ctx.shadowBlur = this.shadowBlur;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, Math.abs(this.size), 0, CONSTANTS.TAU);
-      ctx.fill();
+      ParticleSystem.drawShape(ctx, this.x, this.y, this.size, config.particleShape);
     }
 
     applyCursorInteraction() {
@@ -227,9 +225,7 @@ window.ParticleSystem = window.ParticleSystem || {};
       ctx.fillStyle = this.color;
       ctx.shadowColor = this.color;
       ctx.shadowBlur = config.shadowBlur;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, Math.abs(this.size), 0, CONSTANTS.TAU);
-      ctx.fill();
+      ParticleSystem.drawShape(ctx, this.x, this.y, this.size, config.particleShape);
       ctx.restore();
     }
   }
@@ -253,5 +249,78 @@ window.ParticleSystem = window.ParticleSystem || {};
     for (let i = 0; i < count; i++) {
       ParticleSystem.explosionParticles.push(new ExplosionParticle(x, y));
     }
+  };
+
+  /* ── Отрисовка разных форм ── */
+
+  ParticleSystem.drawShape = function drawShape(ctx, x, y, size, shape) {
+    const s = Math.abs(size);
+    if (s < 0.5) return;
+
+    ctx.beginPath();
+
+    switch (shape) {
+      case 'circle':
+        ctx.arc(x, y, s, 0, Math.PI * 2);
+        break;
+
+      case 'square':
+        ctx.rect(x - s, y - s, s * 2, s * 2);
+        break;
+
+      case 'triangle':
+        ctx.moveTo(x, y - s);
+        ctx.lineTo(x - s * 0.866, y + s * 0.5);
+        ctx.lineTo(x + s * 0.866, y + s * 0.5);
+        ctx.closePath();
+        break;
+
+      case 'diamond':
+        ctx.moveTo(x, y - s);
+        ctx.lineTo(x + s, y);
+        ctx.lineTo(x, y + s);
+        ctx.lineTo(x - s, y);
+        ctx.closePath();
+        break;
+
+      case 'star': {
+        const spikes = 5;
+        const outerR = s;
+        const innerR = s * 0.4;
+        for (let i = 0; i < spikes * 2; i++) {
+          const r = i % 2 === 0 ? outerR : innerR;
+          const angle = (i * Math.PI) / spikes - Math.PI / 2;
+          const px = x + Math.cos(angle) * r;
+          const py = y + Math.sin(angle) * r;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        break;
+      }
+
+      case 'drop':
+        ctx.moveTo(x, y - s);
+        ctx.bezierCurveTo(x + s, y - s * 0.2, x + s, y + s * 0.6, x, y + s);
+        ctx.bezierCurveTo(x - s, y + s * 0.6, x - s, y - s * 0.2, x, y - s);
+        ctx.closePath();
+        break;
+
+      case 'polygon': {
+        const sides = 6;
+        for (let i = 0; i < sides; i++) {
+          const angle = (i * 2 * Math.PI) / sides - Math.PI / 2;
+          const px = x + Math.cos(angle) * s;
+          const py = y + Math.sin(angle) * s;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        break;
+      }
+
+      default:
+        ctx.arc(x, y, s, 0, Math.PI * 2);
+    }
+
+    ctx.fill();
   };
 })();

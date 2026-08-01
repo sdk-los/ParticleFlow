@@ -7,6 +7,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.DEFAULT_CONFIG = Object.freeze({
     particleCount: 250,
     particleSize: 4,
+    particleShape: 'circle',
     speedMultiplier: 1.0,
     hue: 130,
     colorPalette: 'mono',
