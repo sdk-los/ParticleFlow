@@ -317,6 +317,92 @@ window.ParticleSystem = window.ParticleSystem || {};
         break;
       }
 
+      case 'cross': {
+        const w = s * 0.35;
+        ctx.rect(x - w, y - s, w * 2, s * 2);
+        ctx.rect(x - s, y - w, s * 2, w * 2);
+        break;
+      }
+
+      case 'ring':
+        ctx.arc(x, y, s, 0, Math.PI * 2);
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.lineWidth = Math.max(1, s * 0.25);
+        ctx.stroke();
+        return;
+
+      case 'heart': {
+        const b = s * 0.3;
+        ctx.moveTo(x, y + s * 0.8);
+        ctx.bezierCurveTo(x - s, y - b, x - s * 0.5, y - s, x, y - s * 0.3);
+        ctx.bezierCurveTo(x + s * 0.5, y - s, x + s, y - b, x, y + s * 0.8);
+        ctx.closePath();
+        break;
+      }
+
+      case 'arrow':
+        ctx.moveTo(x, y - s);
+        ctx.lineTo(x + s * 0.6, y + s * 0.2);
+        ctx.lineTo(x + s * 0.25, y + s * 0.2);
+        ctx.lineTo(x + s * 0.25, y + s);
+        ctx.lineTo(x - s * 0.25, y + s);
+        ctx.lineTo(x - s * 0.25, y + s * 0.2);
+        ctx.lineTo(x - s * 0.6, y + s * 0.2);
+        ctx.closePath();
+        break;
+
+      case 'crescent': {
+        // Внешняя дуга: правая половина (от 3π/2 до π/2 по часовой)
+        ctx.arc(x, y, s, Math.PI * 1.5, Math.PI * 0.5);
+        // Внутренняя дуга: обратно (от π/2 до 3π/2 против часовой) со смещением влево
+        ctx.arc(x - s * 0.35, y, s * 0.7, Math.PI * 0.5, Math.PI * 1.5, true);
+        ctx.closePath();
+        break;
+      }
+
+      case 'bolt':
+        ctx.moveTo(x + s * 0.5, y - s);
+        ctx.lineTo(x - s * 0.35, y + s * 0.15);
+        ctx.lineTo(x + s * 0.15, y + s * 0.15);
+        ctx.lineTo(x - s * 0.5, y + s);
+        ctx.lineTo(x + s * 0.65, y - s * 0.15);
+        ctx.lineTo(x + s * 0.1, y - s * 0.15);
+        ctx.closePath();
+        break;
+
+      case 'spiral': {
+        const turns = 3;
+        const segments = 60;
+        for (let i = 0; i <= segments; i++) {
+          const t = i / segments;
+          const angle = t * turns * Math.PI * 2;
+          const r = s * t;
+          const px = x + Math.cos(angle) * r;
+          const py = y + Math.sin(angle) * r;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.lineWidth = Math.max(1, s * 0.2);
+        ctx.stroke();
+        return;
+      }
+
+      case 'infinity': {
+        const segs = 40;
+        for (let i = 0; i <= segs; i++) {
+          const t = (i / segs) * Math.PI * 2;
+          const r = s;
+          const denom = 1 + Math.sin(t) ** 2;
+          const px = x + r * Math.cos(t) / denom;
+          const py = y + r * Math.sin(t) * Math.cos(t) / denom;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.lineWidth = Math.max(1, s * 0.2);
+        ctx.stroke();
+        return;
+      }
+
       default:
         ctx.arc(x, y, s, 0, Math.PI * 2);
     }
