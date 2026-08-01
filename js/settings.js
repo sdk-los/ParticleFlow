@@ -58,11 +58,12 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   /* ── Panel open/close ── */
-  ParticleSystem.openSettings = function openSettings() {
+  ParticleSystem.toggleSettings = function toggleSettings() {
     const panel = document.getElementById('settings-panel');
     const overlay = document.getElementById('settings-overlay');
-    panel.classList.add(CONSTANTS.CSS_OPEN_CLASS);
-    overlay.classList.add(CONSTANTS.CSS_OPEN_CLASS);
+    const isOpen = panel.classList.contains(CONSTANTS.CSS_OPEN_CLASS);
+    panel.classList.toggle(CONSTANTS.CSS_OPEN_CLASS, !isOpen);
+    overlay.classList.toggle(CONSTANTS.CSS_OPEN_CLASS, !isOpen);
   };
 
   ParticleSystem.closeSettings = function closeSettings() {

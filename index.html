@@ -82,9 +82,9 @@
         <div class="control-group">
           <div class="control-label">
             <span>Количество частиц</span>
-            <span class="control-value" data-display="particleCount">100</span>
+            <span class="control-value" data-display="particleCount">250</span>
           </div>
-          <input type="range" data-setting="particleCount" min="10" max="300" value="100">
+          <input type="range" data-setting="particleCount" min="10" max="5000" value="250">
         </div>
 
         <div class="control-group">
@@ -209,7 +209,7 @@
             <span>Количество частиц</span>
             <span class="control-value" data-display="explosionCount">30</span>
           </div>
-          <input type="range" data-setting="explosionCount" min="5" max="100" value="30">
+          <input type="range" data-setting="explosionCount" min="5" max="1000" value="30">
         </div>
 
         <div class="control-group">
@@ -475,6 +475,10 @@
     </details>
 
     <button id="settings-reset" type="button">Сбросить настройки</button>
+
+    <div class="settings-footer">
+      <a class="github-link" href="https://github.com/sdk-los/ParticleFlow" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
   </div>
 
   <script src="js/constants.js"></script>

@@ -5,7 +5,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   const { ParticleSystem, ParticleSystem: { CONSTANTS, COLOR_PALETTES, CURSOR_MODES } } = window;
 
   ParticleSystem.DEFAULT_CONFIG = Object.freeze({
-    particleCount: 100,
+    particleCount: 250,
     particleSize: 4,
     speedMultiplier: 1.0,
     hue: 130,
@@ -19,8 +19,8 @@ window.ParticleSystem = window.ParticleSystem || {};
     shadowBlur: 0,
     pulsate: true,
     bounce: true,
-    showFps: false,
-    showParticleCount: false,
+    showFps: true,
+    showParticleCount: true,
     backgroundMode: 'gradient',
     backgroundColor: '#1a1a2e',
     backgroundGradientStrength: 0.35,
@@ -104,7 +104,7 @@ window.ParticleSystem = window.ParticleSystem || {};
         hue: 265,
         colorPalette: 'rainbow',
         attractionForce: 0.75,
-        cursorMode: 'repel',
+        cursorMode: 'orbit',
         attractionRadius: 360,
         shadowBlur: 30,
         pulsate: true,

@@ -135,10 +135,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   /* ── Particle lifecycle ── */
 
   ParticleSystem.createParticles = function createParticles() {
-    const count = Math.min(
-      config.particleCount,
-      Math.floor(ParticleSystem.canvasBounds.width / CONSTANTS.DENSITY_DIVISOR)
-    );
+    const count = config.particleCount;
     ParticleSystem.particles = Array.from({ length: count }, () => {
       const x = Math.random() * ParticleSystem.canvasBounds.width;
       const y = Math.random() * ParticleSystem.canvasBounds.height;

@@ -71,7 +71,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     const settingsReset = document.getElementById('settings-reset');
     const settingsOverlay = document.getElementById('settings-overlay');
 
-    settingsToggle.addEventListener('click', ParticleSystem.openSettings);
+    settingsToggle.addEventListener('click', ParticleSystem.toggleSettings);
     settingsClose.addEventListener('click', ParticleSystem.closeSettings);
     settingsReset.addEventListener('click', ParticleSystem.resetSettings);
     settingsOverlay.addEventListener('click', ParticleSystem.closeSettings);
