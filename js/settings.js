@@ -108,8 +108,8 @@ window.ParticleSystem = window.ParticleSystem || {};
     );
   };
 
-  ParticleSystem.getPresetButtons = function getPresetButtons() {
-    return document.getElementById('settings-panel').querySelectorAll(`[${CONSTANTS.ATTR_PRESET}]`);
+  ParticleSystem.getPresetSelect = function getPresetSelect() {
+    return document.getElementById('settings-panel').querySelector('#preset-select');
   };
 
   /* ── Presets ── */
@@ -125,14 +125,12 @@ window.ParticleSystem = window.ParticleSystem || {};
     );
   };
 
-  ParticleSystem.syncPresetButtons = function syncPresetButtons() {
+  ParticleSystem.syncPresetSelect = function syncPresetSelect() {
     const activePresetKey = ParticleSystem.getActivePresetKey();
-    ParticleSystem.getPresetButtons().forEach((button) => {
-      button.classList.toggle(
-        'active',
-        button.getAttribute(CONSTANTS.ATTR_PRESET) === activePresetKey
-      );
-    });
+    const presetSelect = ParticleSystem.getPresetSelect();
+    if (presetSelect) {
+      presetSelect.value = activePresetKey || '';
+    }
   };
 
   ParticleSystem.syncCustomPaletteVisibility = function syncCustomPaletteVisibility() {
@@ -224,7 +222,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.syncDriftDirectionVisibility();
     ParticleSystem.syncDriftOrbitVisibility();
     ParticleSystem.syncDriftOrbitRepulsionVisibility();
-    ParticleSystem.syncPresetButtons();
+    ParticleSystem.syncPresetSelect();
     ParticleSystem.syncFpsIndicator();
   };
 
@@ -249,7 +247,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitRepulsionVisibility();
     if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);
-    ParticleSystem.syncPresetButtons();
+    ParticleSystem.syncPresetSelect();
     ParticleSystem.saveSettings();
   };
 
@@ -289,10 +287,13 @@ window.ParticleSystem = window.ParticleSystem || {};
       input.addEventListener(eventName, () => ParticleSystem.handleSettingInput(input));
     });
 
-    ParticleSystem.getPresetButtons().forEach((button) => {
-      button.addEventListener('click', () => {
-        ParticleSystem.applyPreset(button.getAttribute(CONSTANTS.ATTR_PRESET));
+    const presetSelect = ParticleSystem.getPresetSelect();
+    if (presetSelect) {
+      presetSelect.addEventListener('change', () => {
+        if (presetSelect.value) {
+          ParticleSystem.applyPreset(presetSelect.value);
+        }
       });
-    });
+    }
   };
 })();
