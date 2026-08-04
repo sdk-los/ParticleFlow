@@ -166,6 +166,43 @@ window.ParticleSystem = window.ParticleSystem || {};
     });
   };
 
+  /* ── Mobile swipe gesture ── */
+  ParticleSystem.bindSettingsSwipeToClose = function bindSettingsSwipeToClose() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    const mobilePointer = window.matchMedia && window.matchMedia('(pointer: coarse)');
+    let swipeStart = null;
+    const interactiveSelector = 'input, select, button, label, a, summary';
+
+    panel.addEventListener('touchstart', (event) => {
+      if (!mobilePointer || !mobilePointer.matches || event.touches.length !== 1) return;
+      if (event.target.closest && event.target.closest(interactiveSelector)) return;
+
+      const touch = event.touches[0];
+      swipeStart = { x: touch.clientX, y: touch.clientY };
+    }, { passive: true });
+
+    panel.addEventListener('touchend', (event) => {
+      if (!swipeStart || event.changedTouches.length !== 1) {
+        swipeStart = null;
+        return;
+      }
+
+      const touch = event.changedTouches[0];
+      const deltaX = touch.clientX - swipeStart.x;
+      const deltaY = touch.clientY - swipeStart.y;
+      swipeStart = null;
+
+      const isRightSwipe = deltaX >= 64 && deltaX > Math.abs(deltaY) * 1.5;
+      if (isRightSwipe) ParticleSystem.closeSettings();
+    }, { passive: true });
+
+    panel.addEventListener('touchcancel', () => {
+      swipeStart = null;
+    }, { passive: true });
+  };
+
   /* ── Presets ── */
   ParticleSystem.doesPresetMatchConfig = function doesPresetMatchConfig(preset) {
     return Object.entries(preset.settings).every(
@@ -366,5 +403,6 @@ window.ParticleSystem = window.ParticleSystem || {};
     }
 
     ParticleSystem.bindSettingHelp();
+    ParticleSystem.bindSettingsSwipeToClose();
   };
 })();
