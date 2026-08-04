@@ -225,6 +225,19 @@ window.ParticleSystem = window.ParticleSystem || {};
     });
   };
 
+  ParticleSystem.syncExplosionSettingsVisibility = function syncExplosionSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    const isEnabled = config.explosionEnabled;
+    panel.querySelectorAll('[data-explosion-setting]').forEach((group) => {
+      group.hidden = !isEnabled;
+    });
+    panel.querySelectorAll('[data-explosion-burst-only]').forEach((group) => {
+      group.hidden = !isEnabled || config.explosionMode !== 'burst';
+    });
+  };
+
   /* ── Input handlers ── */
   ParticleSystem.handleCheckboxInput = function handleCheckboxInput(input, key) {
     const value = input.checked;
@@ -276,6 +289,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.syncDriftDirectionVisibility();
     ParticleSystem.syncDriftOrbitVisibility();
     ParticleSystem.syncDriftOrbitRepulsionVisibility();
+    ParticleSystem.syncExplosionSettingsVisibility();
     ParticleSystem.syncPresetSelect();
     ParticleSystem.syncFpsIndicator();
   };
@@ -299,6 +313,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'selfDriftMode') ParticleSystem.syncDriftDirectionVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitRepulsionVisibility();
+    if (key === 'explosionEnabled' || key === 'explosionMode') ParticleSystem.syncExplosionSettingsVisibility();
     if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);
     ParticleSystem.syncPresetSelect();
