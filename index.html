@@ -62,6 +62,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Пресеты настроек</span>
+            <button class="setting-help" type="button" data-tooltip="Готовые наборы настроек для быстрого старта. После изменения любого параметра будет выбран режим «Пользовательские настройки»." aria-label="Что такое пресеты настроек?">?</button>
           </div>
           <select id="preset-select" class="select-control" aria-label="Пресеты настроек">
             <option value="">Пользовательские настройки</option>
@@ -87,6 +88,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Количество частиц</span>
+            <button class="setting-help" type="button" data-tooltip="Сколько частиц одновременно отображается на экране. Большие значения делают эффект плотнее, но могут снизить FPS." aria-label="Что означает количество частиц?">?</button>
             <span class="control-value" data-display="particleCount">250</span>
           </div>
           <input type="range" data-setting="particleCount" min="10" max="5000" value="250">
@@ -155,6 +157,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Само-дрейф</span>
+            <button class="setting-help" type="button" data-tooltip="Добавляет частицам автономное движение по выбранному алгоритму, даже когда курсор не двигается." aria-label="Что такое само-дрейф?">?</button>
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
@@ -168,6 +171,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Сила дрейфа</span>
+            <button class="setting-help" type="button" data-tooltip="Насколько заметно само-дрейф меняет траекторию частиц. При значении 0 эффект не виден." aria-label="Что означает сила дрейфа?">?</button>
             <span class="control-value" data-display="selfDriftIntensity">0.08</span>
           </div>
           <input type="range" data-setting="selfDriftIntensity" min="0" max="1" step="0.01" value="0.08">
@@ -176,6 +180,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Скорость дрейфа</span>
+            <button class="setting-help" type="button" data-tooltip="Темп анимации само-дрейфа: больше значение — быстрее меняется направление и рисунок движения." aria-label="Что означает скорость дрейфа?">?</button>
             <span class="control-value" data-display="selfDriftSpeed">0.50</span>
           </div>
           <input type="range" data-setting="selfDriftSpeed" min="0.1" max="3" step="0.1" value="0.5">
@@ -184,6 +189,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Режим дрейфа</span>
+            <button class="setting-help" type="button" data-tooltip="Определяет траекторию автономного движения: поток, волна, орбита, вихрь и другие варианты." aria-label="Что такое режим дрейфа?">?</button>
           </div>
           <select data-setting="selfDriftMode" class="select-control">
             <option value="random">Случайный</option>
@@ -197,6 +203,9 @@
             <option value="orbit">Орбитальный (индивидуальный)</option>
             <option value="orbitGlobal">Орбита — общая</option>
             <option value="wave">Волновой</option>
+            <option value="flow">Поток</option>
+            <option value="lissajous">Лиссажу (восьмёрки)</option>
+            <option value="vortex">Вихрь</option>
             <option value="spiral">Спираль — общая</option>
             <option value="spiralIndividual">Спираль — индивидуальная</option>
             <option value="snake">Змейка</option>
@@ -206,6 +215,7 @@
         <div class="control-group" data-drift-direction>
           <div class="control-label">
             <span>Направление (градусы)</span>
+            <button class="setting-help" type="button" data-tooltip="Угол движения для режима «Направленный»: 0° — вправо, 90° — вниз, 180° — влево, 270° — вверх." aria-label="Как работает направление дрейфа?">?</button>
             <span class="control-value" data-display="selfDriftDirection">0</span>
           </div>
           <input type="range" data-setting="selfDriftDirection" min="0" max="360" value="0">
@@ -214,6 +224,7 @@
         <div class="control-group" data-drift-orbit>
           <div class="control-label">
             <span>Радиус орбиты</span>
+            <button class="setting-help" type="button" data-tooltip="Размер круговой траектории в орбитальных режимах. Процент считается относительно размера экрана." aria-label="Что означает радиус орбиты?">?</button>
             <span class="control-value" data-display="selfDriftOrbitRadius">0%</span>
           </div>
           <input type="range" data-setting="selfDriftOrbitRadius" min="0" max="100" step="1" value="0">
@@ -222,6 +233,7 @@
         <div class="control-group" data-drift-orbit-repel>
           <div class="control-label">
             <span>Отталкивание между частицами</span>
+            <button class="setting-help" type="button" data-tooltip="Сила, с которой частицы в общей орбите расходятся друг от друга, чтобы не собираться в одной точке." aria-label="Что означает отталкивание между частицами?">?</button>
             <span class="control-value" data-display="selfDriftOrbitRepulsionStrength">0.35</span>
           </div>
           <input type="range" data-setting="selfDriftOrbitRepulsionStrength" min="0" max="1.2" step="0.01" value="0.35">
@@ -230,6 +242,7 @@
         <div class="control-group" data-drift-orbit-repel>
           <div class="control-label">
             <span>Включить отталкивание</span>
+            <button class="setting-help" type="button" data-tooltip="Работает только в режиме «Орбита — общая» и использует заданную выше силу отталкивания." aria-label="Когда работает отталкивание?">?</button>
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
@@ -277,6 +290,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Сила взаимодействия</span>
+            <button class="setting-help" type="button" data-tooltip="Насколько сильно курсор притягивает, отталкивает или закручивает частицы в выбранном режиме." aria-label="Что означает сила взаимодействия?">?</button>
             <span class="control-value" data-display="attractionForce">0.30</span>
           </div>
           <input type="range" data-setting="attractionForce" min="0" max="1" step="0.01" value="0.3">
@@ -285,6 +299,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Радиус взаимодействия</span>
+            <button class="setting-help" type="button" data-tooltip="Расстояние от курсора, в пределах которого частицы реагируют на него." aria-label="Что означает радиус взаимодействия?">?</button>
             <span class="control-value" data-display="attractionRadius">200</span>
           </div>
           <input type="range" data-setting="attractionRadius" min="50" max="500" value="200">
@@ -293,6 +308,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Режим курсора</span>
+            <button class="setting-help" type="button" data-tooltip="Притяжение тянет частицы к курсору, отталкивание — от него, орбита закручивает вокруг него, а след оставляет дорожку частиц." aria-label="Что такое режим курсора?">?</button>
           </div>
           <select data-setting="cursorMode" class="select-control">
             <option value="attract">Притяжение</option>
@@ -326,6 +342,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Режим взрыва</span>
+            <button class="setting-help" type="button" data-tooltip="«Вспышка» создаёт временные частицы, которые исчезают. «Рождение» добавляет новые частицы в сцену." aria-label="Что означает режим взрыва?">?</button>
           </div>
           <select data-setting="explosionMode" class="select-control">
             <option value="burst">Вспышка (исчезают)</option>
@@ -376,6 +393,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Тропы частиц</span>
+            <button class="setting-help" type="button" data-tooltip="Оставляет за движущимися частицами затухающие следы. Эффект несовместим со свечением, чтобы сохранить производительность." aria-label="Что такое тропы частиц?">?</button>
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
@@ -413,6 +431,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Оттенок (Hue)</span>
+            <button class="setting-help" type="button" data-tooltip="Базовый цвет в цветовой модели HSL: 0° — красный, 120° — зелёный, 240° — синий. Влияет на монохромную палитру." aria-label="Что означает оттенок Hue?">?</button>
             <span class="control-value" data-display="hue">130</span>
           </div>
           <input type="range" data-setting="hue" min="0" max="360" value="130">
@@ -480,6 +499,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Северное сияние</span>
+            <button class="setting-help" type="button" data-tooltip="Добавляет на фон анимированные световые полосы. Эффект может снизить производительность на слабых устройствах." aria-label="Что такое северное сияние?">?</button>
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
@@ -509,6 +529,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Интенсивность градиента</span>
+            <button class="setting-help" type="button" data-tooltip="Контраст дополнительного цвета в градиентном фоне. При 0 фон выглядит почти сплошным." aria-label="Что означает интенсивность градиента?">?</button>
             <span class="control-value" data-display="backgroundGradientStrength">0.35</span>
           </div>
           <input type="range" data-setting="backgroundGradientStrength" min="0" max="1" step="0.01" value="0.35">
@@ -525,6 +546,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Свечение (ShadowBlur)</span>
+            <button class="setting-help" type="button" data-tooltip="Размытое свечение вокруг частиц. Большие значения сильнее нагружают устройство и отключают тропы частиц." aria-label="Что такое свечение ShadowBlur?">?</button>
             <span class="control-value" data-display="shadowBlur">0</span>
           </div>
           <input type="range" data-setting="shadowBlur" min="0" max="50" value="0">
@@ -533,6 +555,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Показывать FPS</span>
+            <button class="setting-help" type="button" data-tooltip="Показывает количество кадров в секунду — ориентир плавности анимации. Чем выше значение, тем плавнее эффект." aria-label="Что такое FPS?">?</button>
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
@@ -567,6 +590,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Показывать соединения</span>
+            <button class="setting-help" type="button" data-tooltip="Рисует линии между близкими частицами. При большом числе частиц эффект может заметно снизить FPS." aria-label="Что такое соединения частиц?">?</button>
           </div>
           <div class="toggle-wrapper">
             <label class="toggle">
@@ -580,6 +604,7 @@
         <div class="control-group">
           <div class="control-label">
             <span>Дальность соединения</span>
+            <button class="setting-help" type="button" data-tooltip="Максимальное расстояние между частицами, на котором между ними появляется линия." aria-label="Что означает дальность соединения?">?</button>
             <span class="control-value" data-display="connectionDistance">120</span>
           </div>
           <input type="range" data-setting="connectionDistance" min="30" max="300" value="120">
@@ -609,6 +634,8 @@
       <a class="github-link" href="https://github.com/sdk-los/ParticleFlow" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
   </div>
+
+  <div id="settings-tooltip" class="settings-tooltip" role="tooltip" hidden></div>
 
   <script src="js/constants.js"></script>
   <script src="js/config.js"></script>

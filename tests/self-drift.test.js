@@ -157,6 +157,32 @@ test('snake drift changes with time', () => {
   assert.ok(a.vx !== b.vx || a.vy !== b.vy);
 });
 
+test('flow drift follows a position-dependent current', () => {
+  const ParticleSystem = loadUtils();
+  ParticleSystem.config.selfDriftMode = 'flow';
+  const first = { x: 20, y: 30, size: 3, driftPhase: 0.1 };
+  const second = { x: 220, y: 180, size: 3, driftPhase: 0.1 };
+
+  const a = ParticleSystem.calculateSelfDrift(first, 1000, 0.3, 1);
+  const b = ParticleSystem.calculateSelfDrift(second, 1000, 0.3, 1);
+
+  assert.ok(a.vx !== b.vx || a.vy !== b.vy);
+});
+
+test('lissajous and vortex drifts return finite, time-varying corrections', () => {
+  const ParticleSystem = loadUtils();
+  ParticleSystem.canvasBounds = { width: 500, height: 400 };
+  const particle = { x: 160, y: 120, anchorX: 160, anchorY: 120, vx: 0, vy: 0, size: 3, driftPhase: 0.2 };
+
+  ['lissajous', 'vortex'].forEach((mode) => {
+    ParticleSystem.config.selfDriftMode = mode;
+    const first = ParticleSystem.calculateSelfDrift(particle, 1000, 0.3, 1);
+    const second = ParticleSystem.calculateSelfDrift(particle, 2000, 0.3, 1);
+    assert.ok(Number.isFinite(first.vx) && Number.isFinite(first.vy), mode);
+    assert.ok(first.vx !== second.vx || first.vy !== second.vy, mode);
+  });
+});
+
 test('cardinal self-drift modes apply a constant force in the selected direction', () => {
   const ParticleSystem = loadUtils();
   const particle = { x: 120, y: 90, size: 3, driftPhase: 0.25 };

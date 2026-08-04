@@ -178,6 +178,49 @@ window.ParticleSystem = window.ParticleSystem || {};
         return { vx: waveX, vy: waveY };
       }
 
+      case 'flow': {
+        // A position-dependent field makes neighbouring particles follow
+        // related currents without forcing them onto one shared path.
+        const flowPhase = timeAngle * 0.7;
+        return {
+          vx: Math.sin(particle.y * 0.012 + flowPhase) * driftStrength,
+          vy: Math.cos(particle.x * 0.012 - flowPhase) * driftStrength,
+        };
+      }
+
+      case 'lissajous': {
+        const anchorX = particle.anchorX || particle.x;
+        const anchorY = particle.anchorY || particle.y;
+        const radius = Math.max(driftStrength * (2 + (particle.size || 0) * 0.2), 14);
+        const curveAngle = timeAngle * 0.75 + (particle.driftPhase || 0);
+        const targetX = anchorX + Math.sin(curveAngle * 2) * radius;
+        const targetY = anchorY + Math.sin(curveAngle * 3 + Math.PI / 2) * radius;
+        const smooth = 0.22;
+        return {
+          vx: ((targetX - particle.x) * 0.025 - (particle.vx || 0)) * smooth,
+          vy: ((targetY - particle.y) * 0.025 - (particle.vy || 0)) * smooth,
+        };
+      }
+
+      case 'vortex': {
+        const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
+        const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;
+        let radius = Math.min(cx, cy) * 0.34 || 60;
+        if (Number.isFinite(config.selfDriftOrbitRadius) && config.selfDriftOrbitRadius > 0) {
+          radius = Math.max(Math.min(cx, cy) * config.selfDriftOrbitRadius / 100, 12);
+        }
+        const vortexAngle = timeAngle * 0.8 + (particle.driftPhase || 0);
+        // Let every orbit breathe at its own phase so it forms a living whirlpool.
+        const targetRadius = radius * (0.55 + 0.3 * Math.sin(vortexAngle * 1.7));
+        const targetX = cx + Math.cos(vortexAngle) * targetRadius;
+        const targetY = cy + Math.sin(vortexAngle) * targetRadius;
+        const smooth = 0.2;
+        return {
+          vx: ((targetX - particle.x) * 0.018 - (particle.vx || 0)) * smooth,
+          vy: ((targetY - particle.y) * 0.018 - (particle.vy || 0)) * smooth,
+        };
+      }
+
       case 'spiral': {
         const cx = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.width / 2 : 0;
         const cy = ParticleSystem.canvasBounds ? ParticleSystem.canvasBounds.height / 2 : 0;

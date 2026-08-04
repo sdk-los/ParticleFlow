@@ -112,6 +112,60 @@ window.ParticleSystem = window.ParticleSystem || {};
     return document.getElementById('settings-panel').querySelector('#preset-select');
   };
 
+  /* ── Contextual setting hints ── */
+  ParticleSystem.bindSettingHelp = function bindSettingHelp() {
+    const panel = document.getElementById('settings-panel');
+    const tooltip = document.getElementById('settings-tooltip');
+    if (!panel || !tooltip) return;
+
+    let activeButton = null;
+
+    function positionTooltip(button) {
+      const rect = button.getBoundingClientRect();
+      const padding = 12;
+      const width = tooltip.offsetWidth;
+      const left = Math.max(padding, Math.min(rect.left, window.innerWidth - width - padding));
+      const top = rect.top - tooltip.offsetHeight - 8 >= padding
+        ? rect.top - tooltip.offsetHeight - 8
+        : rect.bottom + 8;
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+    }
+
+    function showTooltip(button) {
+      const message = button.dataset.tooltip;
+      if (!message) return;
+      activeButton = button;
+      tooltip.textContent = message;
+      tooltip.hidden = false;
+      positionTooltip(button);
+      button.setAttribute('aria-expanded', 'true');
+    }
+
+    function hideTooltip(button) {
+      if (button && button !== activeButton) return;
+      if (activeButton) activeButton.setAttribute('aria-expanded', 'false');
+      activeButton = null;
+      tooltip.hidden = true;
+    }
+
+    panel.querySelectorAll('.setting-help').forEach((button) => {
+      button.setAttribute('aria-expanded', 'false');
+      button.addEventListener('mouseenter', () => showTooltip(button));
+      button.addEventListener('mouseleave', () => hideTooltip(button));
+      button.addEventListener('focus', () => showTooltip(button));
+      button.addEventListener('blur', () => hideTooltip(button));
+      button.addEventListener('click', () => showTooltip(button));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') hideTooltip();
+    });
+    window.addEventListener('resize', () => {
+      if (activeButton && !tooltip.hidden) positionTooltip(activeButton);
+    });
+  };
+
   /* ── Presets ── */
   ParticleSystem.doesPresetMatchConfig = function doesPresetMatchConfig(preset) {
     return Object.entries(preset.settings).every(
@@ -156,7 +210,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (!group) return;
     group.classList.toggle(
       CONSTANTS.CSS_VISIBLE_CLASS,
-      config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal' || config.selfDriftMode === 'spiral' || config.selfDriftMode === 'spiralIndividual'
+      config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal' || config.selfDriftMode === 'vortex' || config.selfDriftMode === 'spiral' || config.selfDriftMode === 'spiralIndividual'
     );
   };
 
@@ -295,5 +349,7 @@ window.ParticleSystem = window.ParticleSystem || {};
         }
       });
     }
+
+    ParticleSystem.bindSettingHelp();
   };
 })();
