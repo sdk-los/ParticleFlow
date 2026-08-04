@@ -117,10 +117,25 @@ window.ParticleSystem = window.ParticleSystem || {};
           this.y = ParticleSystem.clamp(this.y, 0, canvasBounds.height);
         }
       } else {
-        if (this.x < 0) this.x = canvasBounds.width;
-        else if (this.x > canvasBounds.width) this.x = 0;
-        if (this.y < 0) this.y = canvasBounds.height;
-        else if (this.y > canvasBounds.height) this.y = 0;
+        let wrapped = false;
+        if (this.x < 0) {
+          this.x = canvasBounds.width;
+          wrapped = true;
+        } else if (this.x > canvasBounds.width) {
+          this.x = 0;
+          wrapped = true;
+        }
+        if (this.y < 0) {
+          this.y = canvasBounds.height;
+          wrapped = true;
+        } else if (this.y > canvasBounds.height) {
+          this.y = 0;
+          wrapped = true;
+        }
+
+        // A wrapped particle has discontinuous coordinates. Drop its old trail
+        // so the renderer does not join opposite canvas edges with a long line.
+        if (wrapped) this.trail = [];
       }
     }
 
