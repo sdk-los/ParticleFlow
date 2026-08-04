@@ -75,24 +75,24 @@ window.ParticleSystem = window.ParticleSystem || {};
       case 'up':
         return {
           vx: 0,
-          vy: -Math.abs(Math.sin(timeAngle)) * driftStrength,
+          vy: -driftStrength,
         };
 
       case 'down':
         return {
           vx: 0,
-          vy: Math.abs(Math.sin(timeAngle)) * driftStrength,
+          vy: driftStrength,
         };
 
       case 'left':
         return {
-          vx: -Math.abs(Math.cos(timeAngle)) * driftStrength,
+          vx: -driftStrength,
           vy: 0,
         };
 
       case 'right':
         return {
-          vx: Math.abs(Math.cos(timeAngle)) * driftStrength,
+          vx: driftStrength,
           vy: 0,
         };
 

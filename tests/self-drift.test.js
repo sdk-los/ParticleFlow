@@ -156,3 +156,24 @@ test('snake drift changes with time', () => {
 
   assert.ok(a.vx !== b.vx || a.vy !== b.vy);
 });
+
+test('cardinal self-drift modes apply a constant force in the selected direction', () => {
+  const ParticleSystem = loadUtils();
+  const particle = { x: 120, y: 90, size: 3, driftPhase: 0.25 };
+  const intensity = 0.08;
+  const driftStrength = intensity * (0.3 + particle.size * 0.04);
+
+  const expectedDrifts = {
+    up: { vx: 0, vy: -driftStrength },
+    down: { vx: 0, vy: driftStrength },
+    left: { vx: -driftStrength, vy: 0 },
+    right: { vx: driftStrength, vy: 0 },
+  };
+
+  Object.entries(expectedDrifts).forEach(([mode, expected]) => {
+    ParticleSystem.config.selfDriftMode = mode;
+    const drift = ParticleSystem.calculateSelfDrift(particle, 1000, intensity, 0.5);
+    assert.equal(drift.vx, expected.vx, mode);
+    assert.equal(drift.vy, expected.vy, mode);
+  });
+});
