@@ -69,11 +69,13 @@ window.ParticleSystem = window.ParticleSystem || {};
     const settingsToggle = document.getElementById('settings-toggle');
     const settingsClose = document.getElementById('settings-close');
     const settingsReset = document.getElementById('settings-reset');
+    const copySceneLink = document.getElementById('copy-scene-link');
     const settingsOverlay = document.getElementById('settings-overlay');
 
     settingsToggle.addEventListener('click', ParticleSystem.toggleSettings);
     settingsClose.addEventListener('click', ParticleSystem.closeSettings);
     settingsReset.addEventListener('click', ParticleSystem.resetSettings);
+    if (copySceneLink) copySceneLink.addEventListener('click', ParticleSystem.copySceneLink);
     settingsOverlay.addEventListener('click', ParticleSystem.closeSettings);
     document.addEventListener('keydown', (e) => {
       const panel = document.getElementById('settings-panel');
@@ -166,6 +168,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.ctx = canvas.getContext('2d');
 
     ParticleSystem.loadSavedSettings();
+    ParticleSystem.loadSceneFromUrl();
     ParticleSystem.syncControlsFromConfig();
     ParticleSystem.resizeCanvas();
     ParticleSystem.createParticles();

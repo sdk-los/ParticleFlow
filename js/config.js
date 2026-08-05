@@ -268,6 +268,35 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   /* ── Settings persistence ── */
 
+  ParticleSystem.getSceneSettings = function getSceneSettings() {
+    return Object.keys(ParticleSystem.DEFAULT_CONFIG).map((key) => ParticleSystem.config[key]);
+  };
+
+  ParticleSystem.encodeScene = function encodeScene() {
+    try {
+      const payload = JSON.stringify([
+        CONSTANTS.SCENE_VERSION,
+        ParticleSystem.getSceneSettings(),
+      ]);
+      return window.btoa(payload)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/g, '');
+    } catch (error) {
+      console.warn('Не удалось подготовить ссылку на сцену:', error);
+      return null;
+    }
+  };
+
+  ParticleSystem.getSceneUrl = function getSceneUrl() {
+    const encodedScene = ParticleSystem.encodeScene();
+    if (!encodedScene || !window.location) return null;
+
+    const url = new URL(window.location.href);
+    url.hash = `${CONSTANTS.SCENE_HASH_PARAM}=${encodedScene}`;
+    return url.href;
+  };
+
   ParticleSystem.readNumberSetting = function readNumberSetting(key, value) {
     const input = ParticleSystem.getSettingControl
       ? ParticleSystem.getSettingControl(key)
@@ -288,9 +317,6 @@ window.ParticleSystem = window.ParticleSystem || {};
     const defaultValue = ParticleSystem.DEFAULT_CONFIG[key];
     if (typeof defaultValue === 'boolean') {
       return typeof value === 'boolean' ? value : defaultValue;
-    }
-    if (typeof defaultValue === 'string') {
-      return typeof value === 'string' ? value : defaultValue;
     }
     if (key === 'colorPalette') {
       return Object.prototype.hasOwnProperty.call(COLOR_PALETTES, value)
@@ -316,7 +342,57 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key.startsWith('customColor')) {
       return ParticleSystem.isValidHexColor(value) ? value : defaultValue;
     }
+    if (typeof defaultValue === 'string') {
+      return typeof value === 'string' ? value : defaultValue;
+    }
     return ParticleSystem.readNumberSetting(key, value);
+  };
+
+  ParticleSystem.decodeScene = function decodeScene(encodedScene) {
+    if (typeof encodedScene !== 'string'
+      || !encodedScene
+      || encodedScene.length > CONSTANTS.SCENE_MAX_LENGTH
+      || !/^[A-Za-z0-9_-]+$/.test(encodedScene)) return null;
+
+    try {
+      const base64 = encodedScene.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+      const decoded = JSON.parse(window.atob(padded));
+      const keys = Object.keys(ParticleSystem.DEFAULT_CONFIG);
+      if (!Array.isArray(decoded) || decoded.length !== 2
+        || decoded[0] !== CONSTANTS.SCENE_VERSION || !Array.isArray(decoded[1])
+        || decoded[1].length !== keys.length) return null;
+
+      const settings = {};
+      for (let index = 0; index < keys.length; index += 1) {
+        const key = keys[index];
+        const value = decoded[1][index];
+        const defaultValue = ParticleSystem.DEFAULT_CONFIG[key];
+        const input = ParticleSystem.getSettingControl ? ParticleSystem.getSettingControl(key) : null;
+        const isNumberInRange = typeof defaultValue !== 'number' || (typeof value === 'number'
+          && Number.isFinite(value)
+          && (!input || value >= Number(input.min))
+          && (!input || value <= Number(input.max)));
+        if (!isNumberInRange || ParticleSystem.readStoredSetting(key, value) !== value) return null;
+        settings[key] = value;
+      }
+      return settings;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  ParticleSystem.loadSceneFromUrl = function loadSceneFromUrl() {
+    if (!window.location) return false;
+    const hash = window.location.hash.replace(/^#/, '');
+    const encodedScene = new URLSearchParams(hash).get(CONSTANTS.SCENE_HASH_PARAM);
+    const settings = ParticleSystem.decodeScene(encodedScene);
+    if (!settings) {
+      if (encodedScene) console.warn('Ссылка на сцену имеет некорректный формат.');
+      return false;
+    }
+    Object.assign(ParticleSystem.config, settings);
+    return true;
   };
 
   ParticleSystem.loadSavedSettings = function loadSavedSettings() {

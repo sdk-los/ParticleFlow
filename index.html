@@ -629,7 +629,11 @@
       </div>
     </details>
 
-    <button id="settings-reset" type="button" aria-label="Сбросить все настройки">Сбросить настройки</button>
+    <div class="settings-actions">
+      <button id="copy-scene-link" type="button" aria-describedby="scene-link-status">Скопировать ссылку на сцену</button>
+      <span id="scene-link-status" class="scene-link-status" role="status" aria-live="polite"></span>
+      <button id="settings-reset" type="button" aria-label="Сбросить все настройки">Сбросить настройки</button>
+    </div>
 
     <div class="settings-footer">
       <a class="github-link" href="https://github.com/sdk-los/ParticleFlow" target="_blank" rel="noopener noreferrer">GitHub</a>

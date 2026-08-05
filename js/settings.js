@@ -396,6 +396,25 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.createParticles();
   };
 
+  ParticleSystem.copySceneLink = async function copySceneLink() {
+    const status = document.getElementById('scene-link-status');
+    const sceneUrl = ParticleSystem.getSceneUrl();
+    if (!sceneUrl) {
+      if (status) status.textContent = 'Не удалось подготовить ссылку.';
+      return;
+    }
+
+    try {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        throw new Error('Clipboard API is unavailable');
+      }
+      await navigator.clipboard.writeText(sceneUrl);
+      if (status) status.textContent = 'Ссылка скопирована.';
+    } catch (error) {
+      if (status) status.textContent = 'Не удалось скопировать ссылку. Скопируйте адрес из браузера.';
+    }
+  };
+
   ParticleSystem.applyPreset = function applyPreset(presetKey) {
     const preset = SETTINGS_PRESETS[presetKey];
     if (!preset) return;

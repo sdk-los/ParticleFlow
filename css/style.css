@@ -87,6 +87,7 @@
     #settings-toggle:focus-visible,
     #settings-close:focus-visible,
     #settings-reset:focus-visible,
+    #copy-scene-link:focus-visible,
     .github-link:focus-visible,
     .select-control:focus-visible,
     input[type="range"]:focus-visible,
@@ -524,10 +525,14 @@
       color: rgba(255, 255, 255, 0.7);
     }
 
-    #settings-reset {
+    .settings-actions {
+      margin-top: 8px;
+    }
+
+    #settings-reset,
+    #copy-scene-link {
       width: 100%;
       min-height: 40px;
-      margin-top: 8px;
       border: 1px solid rgba(10, 207, 131, 0.35);
       border-radius: 8px;
       background: rgba(10, 207, 131, 0.08);
@@ -538,10 +543,24 @@
       transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
-    #settings-reset:hover {
+    #settings-reset:hover,
+    #copy-scene-link:hover {
       border-color: rgba(10, 207, 131, 0.65);
       background: rgba(10, 207, 131, 0.15);
       color: #7dffc9;
+    }
+
+    #settings-reset {
+      margin-top: 8px;
+    }
+
+    .scene-link-status {
+      display: block;
+      min-height: 18px;
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      text-align: center;
     }
 
     /* ===== GitHub ссылка в футере ===== */
