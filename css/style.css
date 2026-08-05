@@ -84,6 +84,30 @@
       box-shadow: 0 0 20px rgba(10, 207, 131, 0.3);
     }
 
+    #settings-toggle:focus-visible,
+    #settings-close:focus-visible,
+    #settings-reset:focus-visible,
+    .github-link:focus-visible,
+    .select-control:focus-visible,
+    input[type="range"]:focus-visible,
+    .color-control:focus-within {
+      outline: 3px solid #7dffc9;
+      outline-offset: 3px;
+    }
+
+    /* Контур summary обрезается overflow контейнера section, поэтому
+       фокус раздела показываем внутри его собственной границы. */
+    .settings-section:has(.section-summary:focus-visible) {
+      border-color: #7dffc9;
+      box-shadow: inset 0 0 0 2px #7dffc9, 0 0 14px rgba(125, 255, 201, 0.28);
+    }
+
+    .section-summary:focus-visible {
+      background: rgba(10, 207, 131, 0.2);
+      box-shadow: inset 0 0 0 3px #7dffc9;
+      outline: none;
+    }
+
     /* ===== Оверлей ===== */
     #settings-overlay {
       position: fixed;
@@ -487,6 +511,11 @@
 
     .toggle input:checked + .slider::before {
       transform: translateX(20px);
+    }
+
+    .toggle input:focus-visible + .slider {
+      outline: 3px solid #7dffc9;
+      outline-offset: 3px;
     }
 
     .toggle-label {

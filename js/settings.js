@@ -65,19 +65,53 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   /* ── Panel open/close ── */
-  ParticleSystem.toggleSettings = function toggleSettings() {
+  ParticleSystem.openSettings = function openSettings() {
     const panel = document.getElementById('settings-panel');
     const overlay = document.getElementById('settings-overlay');
-    const isOpen = panel.classList.contains(CONSTANTS.CSS_OPEN_CLASS);
-    panel.classList.toggle(CONSTANTS.CSS_OPEN_CLASS, !isOpen);
-    overlay.classList.toggle(CONSTANTS.CSS_OPEN_CLASS, !isOpen);
+    const settingsToggle = document.getElementById('settings-toggle');
+    if (!panel || !overlay) return;
+
+    panel.classList.add(CONSTANTS.CSS_OPEN_CLASS);
+    overlay.classList.add(CONSTANTS.CSS_OPEN_CLASS);
+    panel.setAttribute('aria-hidden', 'false');
+    panel.removeAttribute('inert');
+    overlay.setAttribute('aria-hidden', 'false');
+    if (settingsToggle) settingsToggle.setAttribute('aria-expanded', 'true');
+
+    const focusInitialControl = () => {
+      const closeButton = panel.querySelector('#settings-close');
+      if (closeButton) closeButton.focus();
+    };
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(focusInitialControl);
+    } else {
+      focusInitialControl();
+    }
+  };
+
+  ParticleSystem.toggleSettings = function toggleSettings() {
+    const panel = document.getElementById('settings-panel');
+    if (panel && panel.classList.contains(CONSTANTS.CSS_OPEN_CLASS)) {
+      ParticleSystem.closeSettings();
+    } else {
+      ParticleSystem.openSettings();
+    }
   };
 
   ParticleSystem.closeSettings = function closeSettings() {
     const panel = document.getElementById('settings-panel');
     const overlay = document.getElementById('settings-overlay');
+    const settingsToggle = document.getElementById('settings-toggle');
+    if (!panel || !overlay) return;
     panel.classList.remove(CONSTANTS.CSS_OPEN_CLASS);
     overlay.classList.remove(CONSTANTS.CSS_OPEN_CLASS);
+    panel.setAttribute('aria-hidden', 'true');
+    panel.setAttribute('inert', '');
+    overlay.setAttribute('aria-hidden', 'true');
+    if (settingsToggle) {
+      settingsToggle.setAttribute('aria-expanded', 'false');
+      settingsToggle.focus();
+    }
   };
 
   /* ── Display helpers ── */
@@ -227,38 +261,34 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.syncCustomPaletteVisibility = function syncCustomPaletteVisibility() {
     const customPaletteGroup = document.getElementById('settings-panel').querySelector('[data-custom-palette]');
     if (!customPaletteGroup) return;
-    customPaletteGroup.classList.toggle(
-      CONSTANTS.CSS_VISIBLE_CLASS,
-      config.colorPalette === 'custom'
-    );
+    const isVisible = config.colorPalette === 'custom';
+    customPaletteGroup.classList.toggle(CONSTANTS.CSS_VISIBLE_CLASS, isVisible);
+    customPaletteGroup.hidden = !isVisible;
   };
 
   ParticleSystem.syncDriftDirectionVisibility = function syncDriftDirectionVisibility() {
     const group = document.getElementById('settings-panel').querySelector('[data-drift-direction]');
     if (!group) return;
-    group.classList.toggle(
-      CONSTANTS.CSS_VISIBLE_CLASS,
-      config.selfDriftMode === 'directional'
-    );
+    const isVisible = config.selfDriftMode === 'directional';
+    group.classList.toggle(CONSTANTS.CSS_VISIBLE_CLASS, isVisible);
+    group.hidden = !isVisible;
   };
 
   ParticleSystem.syncDriftOrbitVisibility = function syncDriftOrbitVisibility() {
     const group = document.getElementById('settings-panel').querySelector('[data-drift-orbit]');
     if (!group) return;
-    group.classList.toggle(
-      CONSTANTS.CSS_VISIBLE_CLASS,
-      config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal' || config.selfDriftMode === 'vortex' || config.selfDriftMode === 'spiral' || config.selfDriftMode === 'spiralIndividual'
-    );
+    const isVisible = config.selfDriftMode === 'orbit' || config.selfDriftMode === 'orbitGlobal' || config.selfDriftMode === 'vortex' || config.selfDriftMode === 'spiral' || config.selfDriftMode === 'spiralIndividual';
+    group.classList.toggle(CONSTANTS.CSS_VISIBLE_CLASS, isVisible);
+    group.hidden = !isVisible;
   };
 
   ParticleSystem.syncDriftOrbitRepulsionVisibility = function syncDriftOrbitRepulsionVisibility() {
     const groups = document.getElementById('settings-panel').querySelectorAll('[data-drift-orbit-repel]');
     if (!groups.length) return;
     groups.forEach((group) => {
-      group.classList.toggle(
-        CONSTANTS.CSS_VISIBLE_CLASS,
-        config.selfDriftMode === 'orbitGlobal'
-      );
+      const isVisible = config.selfDriftMode === 'orbitGlobal';
+      group.classList.toggle(CONSTANTS.CSS_VISIBLE_CLASS, isVisible);
+      group.hidden = !isVisible;
     });
   };
 

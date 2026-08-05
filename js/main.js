@@ -76,7 +76,38 @@ window.ParticleSystem = window.ParticleSystem || {};
     settingsReset.addEventListener('click', ParticleSystem.resetSettings);
     settingsOverlay.addEventListener('click', ParticleSystem.closeSettings);
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') ParticleSystem.closeSettings();
+      const panel = document.getElementById('settings-panel');
+      if (e.key === 'Escape' && panel.classList.contains(CONSTANTS.CSS_OPEN_CLASS)) {
+        e.preventDefault();
+        ParticleSystem.closeSettings();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const panel = document.getElementById('settings-panel');
+      if (e.key !== 'Tab' || !panel.classList.contains(CONSTANTS.CSS_OPEN_CLASS)) return;
+
+      const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
+      const focusableElements = Array.from(panel.querySelectorAll(focusableSelector)).filter((element) => {
+        if (element.closest('[hidden]')) return false;
+        const closedDetails = element.closest('details:not([open])');
+        return !closedDetails || element === closedDetails.querySelector('summary');
+      });
+      if (!focusableElements.length) {
+        e.preventDefault();
+        panel.focus();
+        return;
+      }
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   };
 

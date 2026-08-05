@@ -34,23 +34,23 @@
 </head>
 <body>
 
-    <canvas id="particle-canvas"></canvas>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
   <div id="hud-indicators">
     <div id="fps-indicator" hidden>FPS: 0</div>
     <div id="particle-count-indicator" hidden>Particles: 0</div>
   </div>
 
   <!-- Кнопка-шестерёнка -->
-  <button id="settings-toggle" title="Настройки">⚙️</button>
+  <button id="settings-toggle" type="button" title="Настройки" aria-label="Открыть настройки" aria-controls="settings-panel" aria-expanded="false">⚙️</button>
 
   <!-- Оверлей -->
-  <div id="settings-overlay"></div>
+  <div id="settings-overlay" aria-hidden="true"></div>
 
   <!-- Панель настроек -->
-  <div id="settings-panel">
+  <div id="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-hidden="true" inert tabindex="-1">
     <div class="settings-header">
-      <h2>Настройки</h2>
-      <button id="settings-close">✕</button>
+      <h2 id="settings-title">Настройки</h2>
+      <button id="settings-close" type="button" aria-label="Закрыть настройки">✕</button>
     </div>
 
     <details class="settings-section">
@@ -629,7 +629,7 @@
       </div>
     </details>
 
-    <button id="settings-reset" type="button">Сбросить настройки</button>
+    <button id="settings-reset" type="button" aria-label="Сбросить все настройки">Сбросить настройки</button>
 
     <div class="settings-footer">
       <a class="github-link" href="https://github.com/sdk-los/ParticleFlow" target="_blank" rel="noopener noreferrer">GitHub</a>
