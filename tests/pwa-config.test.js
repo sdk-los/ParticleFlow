@@ -28,10 +28,13 @@ test('index.html exposes mobile PWA metadata and registers the service worker wi
   assert.match(indexHtml, /<meta name="mobile-web-app-capable" content="yes">/);
   assert.match(indexHtml, /navigator\.serviceWorker\.register\(/);
   assert.match(indexHtml, /window\.location\.href/);
+  assert.match(indexHtml, /updateViaCache:\s*'none'/);
+  assert.match(indexHtml, /controllerchange/);
+  assert.match(indexHtml, /visibilitychange/);
 });
 
 test('service worker uses a base-relative cache strategy for subpath hosting', () => {
-  assert.match(serviceWorker, /const CACHE_NAME = 'particleflow-v1';/);
+  assert.match(serviceWorker, /const CACHE_NAME = 'particleflow-__BUILD_ID__';/);
   assert.match(serviceWorker, /new URL\(.*self\.location\.href/);
   assert.match(serviceWorker, /cache\.addAll\(/);
   assert.match(serviceWorker, /event\.request\.mode === 'navigate'/);

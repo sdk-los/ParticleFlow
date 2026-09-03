@@ -682,14 +682,46 @@
   <!-- Регистрация Service Worker для PWA -->
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        const swUrl = new URL('./sw.js', window.location.href);
-        navigator.serviceWorker.register(swUrl, { scope: './' }).then((reg) => {
-          console.log('SW зарегистрирован:', reg.scope);
-        }).catch((err) => {
-          console.warn('Ошибка регистрации SW:', err);
-        });
+      let hasReloadedForUpdate = false;
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        // Новый worker уже подготовил полный офлайн-кэш. Перезагружаем только
+        // один раз, чтобы открытая PWA сразу начала использовать новую сборку.
+        if (!hasReloadedForUpdate) {
+          hasReloadedForUpdate = true;
+          window.location.reload();
+        }
       });
+
+      window.addEventListener('load', async () => {
+        const swUrl = new URL('./sw.js', window.location.href);
+        try {
+          const reg = await navigator.serviceWorker.register(swUrl, {
+            scope: './',
+            // Не используем HTTP-кэш при поиске нового Service Worker.
+            updateViaCache: 'none',
+          });
+          console.log('SW зарегистрирован:', reg.scope);
+          await reg.update();
+        } catch (err) {
+          console.warn('Ошибка регистрации SW:', err);
+        }
+      });
+
+      // При возврате к установленному приложению проверяем, не появился ли
+      // новый деплой. Офлайн-открытие не ломается: ошибка проверки игнорируется.
+      const checkForUpdate = () => {
+        navigator.serviceWorker.getRegistration()
+          .then((reg) => reg?.update())
+          .catch(() => {});
+      };
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          checkForUpdate();
+        }
+      });
+      window.addEventListener('online', checkForUpdate);
     }
   </script>
 

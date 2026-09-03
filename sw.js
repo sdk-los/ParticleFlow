@@ -3,7 +3,10 @@
  * Кэширует основные файлы при установке для работы офлайн.
  */
 
-const CACHE_NAME = 'particleflow-v1';
+// GitHub Actions подставляет SHA коммита перед публикацией. Благодаря этому
+// каждый деплой получает отдельный кэш, а уже установленная PWA замечает
+// обновлённый Service Worker.
+const CACHE_NAME = 'particleflow-__BUILD_ID__';
 const BASE_PATH = new URL('./', self.location.href);
 
 const ASSETS_TO_CACHE = [
@@ -41,7 +44,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME)
+          .filter((name) => name.startsWith('particleflow-') && name !== CACHE_NAME)
           .map((name) => caches.delete(name))
       );
     })
