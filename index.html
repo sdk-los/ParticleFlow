@@ -582,6 +582,19 @@
       <div class="section-body">
         <div class="control-group">
           <div class="control-label">
+            <span>Профиль производительности</span>
+            <button class="setting-help" type="button" data-tooltip="Ограничивает число частиц, разрешение canvas, соединения, длину следов и свечение. На мобильных устройствах лимиты дополнительно снижаются." aria-label="Что такое профиль производительности?">?</button>
+          </div>
+          <select data-setting="performanceProfile" class="select-control" aria-label="Профиль производительности">
+            <option value="unlimited">Без ограничений</option>
+            <option value="economy">Экономный</option>
+            <option value="balanced">Сбалансированный</option>
+            <option value="maximum">Максимальный</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
             <span>Свечение (ShadowBlur)</span>
             <button class="setting-help" type="button" data-tooltip="Размытое свечение вокруг частиц. Большие значения сильнее нагружают устройство и отключают тропы частиц." aria-label="Что такое свечение ShadowBlur?">?</button>
             <span class="control-value" data-display="shadowBlur">0</span>

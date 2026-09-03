@@ -6,6 +6,7 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   /* ── Settings application ── */
   const SETTING_APPLIERS = {
+    performanceProfile: () => ParticleSystem.applyPerformanceProfile(),
     particleCount: ParticleSystem.createParticles,
     particleShape: null,
     speedMultiplier: ParticleSystem.updateParticleSpeed,
@@ -51,7 +52,37 @@ window.ParticleSystem = window.ParticleSystem || {};
     trailColor: null,
   };
 
+  ParticleSystem.syncPerformanceProfileLimits = function syncPerformanceProfileLimits() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    const limits = ParticleSystem.getPerformanceLimits();
+    Object.entries(limits).forEach(([key, maximum]) => {
+      if (key === 'pixelRatio') return;
+      const input = panel.querySelector(`[${CONSTANTS.ATTR_SETTING}="${key}"]`);
+      if (input && input.type === 'range') input.max = String(maximum);
+    });
+  };
+
+  ParticleSystem.applyPerformanceProfile = function applyPerformanceProfile() {
+    const previousParticleCount = ParticleSystem.particles?.length;
+    ParticleSystem.clampConfigToPerformanceProfile();
+    ParticleSystem.syncPerformanceProfileLimits();
+    ParticleSystem.resizeCanvas();
+    ParticleSystem.updateParticleShadowBlur();
+
+    if (previousParticleCount !== config.particleCount) {
+      ParticleSystem.createParticles();
+    }
+    ParticleSystem.getSettingsControls().forEach((input) => {
+      if (['particleCount', 'connectionDistance', 'connectionWidth', 'connectionOpacity', 'trailLength', 'shadowBlur'].includes(input.getAttribute(CONSTANTS.ATTR_SETTING))) {
+        ParticleSystem.syncControl(input);
+      }
+    });
+  };
+
   ParticleSystem.applySettings = function applySettings(key) {
+    ParticleSystem.clampConfigToPerformanceProfile();
     // Автоматически отключаем конфликтующие эффекты для оптимизации FPS
     if (key === 'trailEnabled' && config.trailEnabled) {
       config.shadowBlur = 0;
@@ -370,6 +401,8 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.syncControlsFromConfig = function syncControlsFromConfig() {
+    ParticleSystem.clampConfigToPerformanceProfile();
+    ParticleSystem.syncPerformanceProfileLimits();
     ParticleSystem.getSettingsControls().forEach(ParticleSystem.syncControl);
     ParticleSystem.syncCustomPaletteVisibility();
     ParticleSystem.syncDriftDirectionVisibility();
@@ -440,7 +473,10 @@ window.ParticleSystem = window.ParticleSystem || {};
     const preset = SETTINGS_PRESETS[presetKey];
     if (!preset) return;
 
+    const performanceProfile = config.performanceProfile;
     Object.assign(config, preset.settings);
+    config.performanceProfile = performanceProfile;
+    ParticleSystem.clampConfigToPerformanceProfile();
     
     // Разрешаем конфликты между shadowBlur и trailEnabled
     if (config.shadowBlur > 0 && config.trailEnabled) {

@@ -178,7 +178,7 @@ test('legacy scene links without trailColor load with the white default', () => 
   vm.runInContext(configSource, context);
   const { ParticleSystem } = context.window;
   const legacyValues = Object.keys(ParticleSystem.DEFAULT_CONFIG)
-    .slice(0, -1)
+    .slice(0, -2)
     .map((key) => ParticleSystem.DEFAULT_CONFIG[key]);
   const encoded = context.btoa(JSON.stringify([
     ParticleSystem.CONSTANTS.SCENE_VERSION,

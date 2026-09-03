@@ -170,7 +170,10 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   ParticleSystem.resizeCanvas = function resizeCanvas() {
     const canvas = document.getElementById('particle-canvas');
-    const pixelRatio = Math.max(1, window.devicePixelRatio || 1);
+    const maxPixelRatio = ParticleSystem.getPerformanceLimits
+      ? ParticleSystem.getPerformanceLimits().pixelRatio
+      : Infinity;
+    const pixelRatio = Math.min(Math.max(1, window.devicePixelRatio || 1), maxPixelRatio);
     ParticleSystem.canvasBounds = {
       width: window.innerWidth,
       height: window.innerHeight,

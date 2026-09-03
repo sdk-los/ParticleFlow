@@ -56,7 +56,60 @@ window.ParticleSystem = window.ParticleSystem || {};
     trailLength: 10,
     trailOpacity: 0.3,
     trailColor: '#ffffff',
+    performanceProfile: 'balanced',
   });
+
+  // Профиль ограничивает наиболее дорогие параметры, не меняя художественные
+  // настройки сцены. На устройствах с грубым указателем лимиты ниже: обычно
+  // это телефон или планшет, для которых особенно важны батарея и плавность.
+  ParticleSystem.PERFORMANCE_PROFILES = Object.freeze({
+    unlimited: Object.freeze({
+      label: 'Без ограничений',
+      // Исходные максимумы контролов до появления профилей. DPR намеренно не
+      // ограничивается, чтобы сохранить прежнее поведение canvas.
+      desktop: Object.freeze({ particleCount: 5000, pixelRatio: Infinity, connectionDistance: 300, connectionWidth: 5, connectionOpacity: 1, trailLength: 30, shadowBlur: 50 }),
+      mobile: Object.freeze({ particleCount: 5000, pixelRatio: Infinity, connectionDistance: 300, connectionWidth: 5, connectionOpacity: 1, trailLength: 30, shadowBlur: 50 }),
+    }),
+    economy: Object.freeze({
+      label: 'Экономный',
+      desktop: Object.freeze({ particleCount: 120, pixelRatio: 1, connectionDistance: 90, connectionWidth: 1, connectionOpacity: 0.25, trailLength: 8, shadowBlur: 8 }),
+      mobile: Object.freeze({ particleCount: 80, pixelRatio: 1, connectionDistance: 75, connectionWidth: 1, connectionOpacity: 0.2, trailLength: 6, shadowBlur: 6 }),
+    }),
+    balanced: Object.freeze({
+      label: 'Сбалансированный',
+      desktop: Object.freeze({ particleCount: 500, pixelRatio: 1.5, connectionDistance: 120, connectionWidth: 1.5, connectionOpacity: 0.35, trailLength: 14, shadowBlur: 20 }),
+      mobile: Object.freeze({ particleCount: 250, pixelRatio: 1.25, connectionDistance: 105, connectionWidth: 1.25, connectionOpacity: 0.3, trailLength: 10, shadowBlur: 14 }),
+    }),
+    maximum: Object.freeze({
+      label: 'Максимальный',
+      desktop: Object.freeze({ particleCount: 1500, pixelRatio: 2, connectionDistance: 180, connectionWidth: 2, connectionOpacity: 0.5, trailLength: 24, shadowBlur: 40 }),
+      mobile: Object.freeze({ particleCount: 750, pixelRatio: 1.5, connectionDistance: 150, connectionWidth: 1.75, connectionOpacity: 0.45, trailLength: 18, shadowBlur: 28 }),
+    }),
+  });
+
+  ParticleSystem.isMobilePerformanceTarget = function isMobilePerformanceTarget() {
+    return Boolean(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+      || window.innerWidth <= 768;
+  };
+
+  ParticleSystem.getPerformanceLimits = function getPerformanceLimits(profileKey = ParticleSystem.config?.performanceProfile) {
+    const profile = ParticleSystem.PERFORMANCE_PROFILES[profileKey]
+      || ParticleSystem.PERFORMANCE_PROFILES.balanced;
+    return profile[ParticleSystem.isMobilePerformanceTarget() ? 'mobile' : 'desktop'];
+  };
+
+  ParticleSystem.clampConfigToPerformanceProfile = function clampConfigToPerformanceProfile() {
+    const limits = ParticleSystem.getPerformanceLimits();
+    const limitedKeys = Object.keys(limits).filter((key) => key !== 'pixelRatio');
+    let changed = false;
+    limitedKeys.forEach((key) => {
+      if (ParticleSystem.config[key] > limits[key]) {
+        ParticleSystem.config[key] = limits[key];
+        changed = true;
+      }
+    });
+    return changed;
+  };
 
   // Каждый пресет начинается с полной конфигурации. Это исключает случайное
   // сохранение тяжёлых эффектов от ранее выбранного режима.
@@ -327,6 +380,11 @@ window.ParticleSystem = window.ParticleSystem || {};
         ? value
         : defaultValue;
     }
+    if (key === 'performanceProfile') {
+      return Object.prototype.hasOwnProperty.call(ParticleSystem.PERFORMANCE_PROFILES, value)
+        ? value
+        : defaultValue;
+    }
     if (key === 'cursorMode') {
       return Object.prototype.hasOwnProperty.call(CURSOR_MODES, value)
         ? value
@@ -363,17 +421,17 @@ window.ParticleSystem = window.ParticleSystem || {};
       const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
       const decoded = JSON.parse(window.atob(padded));
       const keys = Object.keys(ParticleSystem.DEFAULT_CONFIG);
-      const isLegacySceneWithoutTrailColor = decoded[1]?.length === keys.length - 1;
+      const missingSettings = keys.length - decoded[1]?.length;
       if (!Array.isArray(decoded) || decoded.length !== 2
         || decoded[0] !== CONSTANTS.SCENE_VERSION || !Array.isArray(decoded[1])
-        || (decoded[1].length !== keys.length && !isLegacySceneWithoutTrailColor)) return null;
+        || missingSettings < 0 || missingSettings > 2) return null;
 
       const settings = {};
       for (let index = 0; index < keys.length; index += 1) {
         const key = keys[index];
-        const value = isLegacySceneWithoutTrailColor && key === 'trailColor'
-          ? ParticleSystem.DEFAULT_CONFIG.trailColor
-          : decoded[1][index];
+        const value = index < decoded[1].length
+          ? decoded[1][index]
+          : ParticleSystem.DEFAULT_CONFIG[key];
         const defaultValue = ParticleSystem.DEFAULT_CONFIG[key];
         const input = ParticleSystem.getSettingControl ? ParticleSystem.getSettingControl(key) : null;
         const isNumberInRange = typeof defaultValue !== 'number' || (typeof value === 'number'
