@@ -288,7 +288,7 @@
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-cursor-interaction-setting>
           <div class="control-label">
             <span>Сила взаимодействия</span>
             <button class="setting-help" type="button" data-tooltip="Насколько сильно курсор притягивает, отталкивает или закручивает частицы в выбранном режиме." aria-label="Что означает сила взаимодействия?">?</button>
@@ -297,7 +297,7 @@
           <input type="range" data-setting="attractionForce" min="0" max="1" step="0.01" value="0.3">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-cursor-interaction-setting>
           <div class="control-label">
             <span>Радиус взаимодействия</span>
             <button class="setting-help" type="button" data-tooltip="Расстояние от курсора, в пределах которого частицы реагируют на него." aria-label="Что означает радиус взаимодействия?">?</button>
@@ -317,6 +317,33 @@
             <option value="orbit">Орбита</option>
             <option value="trail">След</option>
           </select>
+        </div>
+
+        <div class="control-group" data-cursor-trail-setting hidden>
+          <div class="control-label">
+            <span>Длительность следа</span>
+            <button class="setting-help" type="button" data-tooltip="Как долго точки следа остаются видимыми после движения курсора." aria-label="Что означает длительность следа?">?</button>
+            <span class="control-value" data-display="pointerTrailLifetime">700 мс</span>
+          </div>
+          <input type="range" data-setting="pointerTrailLifetime" min="150" max="2000" step="50" value="700">
+        </div>
+
+        <div class="control-group" data-cursor-trail-setting hidden>
+          <div class="control-label">
+            <span>Размер точек</span>
+            <button class="setting-help" type="button" data-tooltip="Начальный размер точек следа. По мере исчезновения они плавно уменьшаются." aria-label="Что означает размер точек следа?">?</button>
+            <span class="control-value" data-display="pointerTrailSize">26 px</span>
+          </div>
+          <input type="range" data-setting="pointerTrailSize" min="6" max="50" step="1" value="26">
+        </div>
+
+        <div class="control-group" data-cursor-trail-setting hidden>
+          <div class="control-label">
+            <span>Плотность следа</span>
+            <button class="setting-help" type="button" data-tooltip="Минимальное расстояние между точками. Меньшее значение делает след плотнее." aria-label="Что означает плотность следа?">?</button>
+            <span class="control-value" data-display="pointerTrailMinDistance">8 px</span>
+          </div>
+          <input type="range" data-setting="pointerTrailMinDistance" min="2" max="30" step="1" value="8">
         </div>
       </div>
     </details>

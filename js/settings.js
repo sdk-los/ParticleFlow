@@ -20,8 +20,11 @@ window.ParticleSystem = window.ParticleSystem || {};
     customColor1: ParticleSystem.updateParticleColors,
     customColor2: ParticleSystem.updateParticleColors,
     customColor3: ParticleSystem.updateParticleColors,
-    cursorInteractionEnabled: null,
+    cursorInteractionEnabled: ParticleSystem.syncCursorMode,
     cursorMode: ParticleSystem.syncCursorMode,
+    pointerTrailLifetime: null,
+    pointerTrailSize: null,
+    pointerTrailMinDistance: null,
     shadowBlur: ParticleSystem.updateParticleShadowBlur,
     backgroundMode: ParticleSystem.renderBackground,
     backgroundColor: ParticleSystem.renderBackground,
@@ -117,6 +120,8 @@ window.ParticleSystem = window.ParticleSystem || {};
   /* ── Display helpers ── */
   ParticleSystem.formatDisplayValue = function formatDisplayValue(key, value) {
     if (key === 'attractionForce' || key === 'trailOpacity' || key === 'selfDriftIntensity' || key === 'selfDriftOrbitRepulsionStrength') return value.toFixed(2);
+    if (key === 'pointerTrailLifetime') return `${Math.round(value)} мс`;
+    if (key === 'pointerTrailSize' || key === 'pointerTrailMinDistance') return `${Math.round(value)} px`;
     if (key === 'speedMultiplier' || key === 'selfDriftSpeed') return value.toFixed(1);
     if (key === 'selfDriftOrbitRadius') return Math.round(value) + '%';
     return String(value);
@@ -305,6 +310,19 @@ window.ParticleSystem = window.ParticleSystem || {};
     });
   };
 
+  ParticleSystem.syncCursorTrailSettingsVisibility = function syncCursorTrailSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    const isTrailMode = config.cursorMode === 'trail';
+    panel.querySelectorAll('[data-cursor-trail-setting]').forEach((group) => {
+      group.hidden = !isTrailMode;
+    });
+    panel.querySelectorAll('[data-cursor-interaction-setting]').forEach((group) => {
+      group.hidden = isTrailMode;
+    });
+  };
+
   /* ── Input handlers ── */
   ParticleSystem.handleCheckboxInput = function handleCheckboxInput(input, key) {
     const value = input.checked;
@@ -357,6 +375,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.syncDriftOrbitVisibility();
     ParticleSystem.syncDriftOrbitRepulsionVisibility();
     ParticleSystem.syncExplosionSettingsVisibility();
+    ParticleSystem.syncCursorTrailSettingsVisibility();
     ParticleSystem.syncPresetSelect();
     ParticleSystem.syncFpsIndicator();
   };
@@ -381,6 +400,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitRepulsionVisibility();
     if (key === 'explosionEnabled' || key === 'explosionMode') ParticleSystem.syncExplosionSettingsVisibility();
+    if (key === 'cursorMode') ParticleSystem.syncCursorTrailSettingsVisibility();
     if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);
     ParticleSystem.syncPresetSelect();

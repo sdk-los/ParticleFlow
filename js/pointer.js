@@ -29,13 +29,17 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.addPointerTrailPoint = function addPointerTrailPoint() {
-    if (config.cursorMode !== 'trail' || !ParticleSystem.isPointerActive()) return;
+    if (
+      !config.cursorInteractionEnabled ||
+      config.cursorMode !== 'trail' ||
+      !ParticleSystem.isPointerActive()
+    ) return;
 
     const lastPoint = ParticleSystem.pointerTrails[ParticleSystem.pointerTrails.length - 1];
     if (lastPoint) {
       const dx = ParticleSystem.mouseX - lastPoint.x;
       const dy = ParticleSystem.mouseY - lastPoint.y;
-      if (dx * dx + dy * dy < CONSTANTS.TRAIL_MIN_DISTANCE ** 2) return;
+      if (dx * dx + dy * dy < config.pointerTrailMinDistance ** 2) return;
     }
 
     ParticleSystem.pointerTrails.push({

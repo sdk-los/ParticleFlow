@@ -148,13 +148,13 @@ window.ParticleSystem = window.ParticleSystem || {};
     const ctx = ParticleSystem.ctx;
 
     ParticleSystem.pointerTrails = ParticleSystem.pointerTrails.filter(
-      (point) => timestamp - point.createdAt < CONSTANTS.TRAIL_LIFETIME
+      (point) => timestamp - point.createdAt < config.pointerTrailLifetime
     );
 
     ParticleSystem.pointerTrails.forEach((point) => {
       const age = timestamp - point.createdAt;
-      const life = 1 - age / CONSTANTS.TRAIL_LIFETIME;
-      const radius = CONSTANTS.TRAIL_POINT_SIZE * life;
+      const life = 1 - age / config.pointerTrailLifetime;
+      const radius = config.pointerTrailSize * life;
 
       ctx.save();
       ctx.globalAlpha = Math.max(0, life * 0.55);

@@ -218,7 +218,9 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.syncCursorMode = function syncCursorMode() {
-    if (config.cursorMode !== 'trail') ParticleSystem.pointerTrails = [];
+    if (config.cursorMode !== 'trail' || !config.cursorInteractionEnabled) {
+      ParticleSystem.pointerTrails = [];
+    }
   };
 
   /* ── Взрывы по клику ── */
