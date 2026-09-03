@@ -27,8 +27,14 @@ function loadParticleSystem(bounce) {
     },
     config: {
       particleSize: 4,
+      particleShape: 'circle',
       hue: 0,
+      speedMultiplier: 1,
+      shadowBlur: 0,
       trailLength: 10,
+      trailEnabled: true,
+      trailOpacity: 0.4,
+      trailColor: '#123456',
       bounce,
       selfDriftEnabled: false,
       cursorInteractionEnabled: false,
@@ -37,6 +43,11 @@ function loadParticleSystem(bounce) {
     canvasBounds: { width: 100, height: 80 },
     randomBetween: () => 0,
     getParticleColor: () => '#fff',
+    hexToRgb: (hex) => [
+      Number.parseInt(hex.slice(1, 3), 16),
+      Number.parseInt(hex.slice(3, 5), 16),
+      Number.parseInt(hex.slice(5, 7), 16),
+    ],
     distance: () => 0,
     clamp: (value, min, max) => Math.min(Math.max(value, min), max),
     isPointerActive: () => false,
@@ -69,4 +80,20 @@ test('bouncing a particle preserves its continuous trail', () => {
 
   assert.equal(particle.x, 100);
   assert.deepEqual(particle.trail, [{ x: 92, y: 40 }, { x: 99, y: 40 }]);
+});
+
+test('particle trails use their configured color and opacity', () => {
+  const ParticleSystem = loadParticleSystem(true);
+  const strokeStyles = [];
+  ParticleSystem.ctx = {
+    beginPath: () => {}, moveTo: () => {}, lineTo: () => {}, stroke: () => {},
+    arc: () => {}, fill: () => {},
+    set strokeStyle(value) { strokeStyles.push(value); },
+  };
+  const particle = new ParticleSystem.Particle(50, 40);
+  particle.trail = [{ x: 45, y: 40 }, { x: 50, y: 40 }];
+
+  particle.draw();
+
+  assert.deepEqual(strokeStyles, ['rgba(18, 52, 86, 0.4)']);
 });

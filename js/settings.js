@@ -48,6 +48,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     trailEnabled: null,
     trailLength: null,
     trailOpacity: null,
+    trailColor: null,
   };
 
   ParticleSystem.applySettings = function applySettings(key) {
@@ -348,8 +349,8 @@ window.ParticleSystem = window.ParticleSystem || {};
     return input.value;
   };
 
-  ParticleSystem.handleColorInput = function handleColorInput(input) {
-    return ParticleSystem.isValidHexColor(input.value) ? input.value : DEFAULT_CONFIG.customColor1;
+  ParticleSystem.handleColorInput = function handleColorInput(input, key) {
+    return ParticleSystem.isValidHexColor(input.value) ? input.value : DEFAULT_CONFIG[key];
   };
 
   /* ── Sync controls ── */
@@ -387,7 +388,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (input.type === 'checkbox') {
       value = ParticleSystem.handleCheckboxInput(input, key);
     } else if (input.type === 'color') {
-      value = ParticleSystem.handleColorInput(input);
+      value = ParticleSystem.handleColorInput(input, key);
     } else if (input.tagName === 'SELECT') {
       value = ParticleSystem.handleSelectInput(input);
     } else {

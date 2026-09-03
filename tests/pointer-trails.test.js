@@ -129,7 +129,7 @@ test('trail settings are configurable, range-normalized, and present in every pr
   context.window.ParticleSystem = {
     clamp: (value, min, max) => Math.min(Math.max(value, min), max),
     getSettingControl: (key) => controlRanges[key] || null,
-    isValidHexColor: () => true,
+    isValidHexColor: (value) => /^#[0-9a-f]{6}$/i.test(value),
   };
   vm.createContext(context);
   vm.runInContext(constantsSource, context);
@@ -139,14 +139,18 @@ test('trail settings are configurable, range-normalized, and present in every pr
   assert.equal(ParticleSystem.readStoredSetting('pointerTrailLifetime', 50), 150);
   assert.equal(ParticleSystem.readStoredSetting('pointerTrailSize', 80), 50);
   assert.equal(ParticleSystem.readStoredSetting('pointerTrailMinDistance', 0), 2);
+  assert.equal(ParticleSystem.readStoredSetting('trailColor', '#12abef'), '#12abef');
+  assert.equal(ParticleSystem.readStoredSetting('trailColor', 'blue'), '#ffffff');
   ParticleSystem.config.pointerTrailLifetime = 1200;
   ParticleSystem.config.pointerTrailSize = 32;
   ParticleSystem.config.pointerTrailMinDistance = 4;
+  ParticleSystem.config.trailColor = '#12abef';
   ParticleSystem.saveSettings();
   const persistedSettings = JSON.parse(savedSettings);
   assert.equal(persistedSettings.pointerTrailLifetime, 1200);
   assert.equal(persistedSettings.pointerTrailSize, 32);
   assert.equal(persistedSettings.pointerTrailMinDistance, 4);
+  assert.equal(persistedSettings.trailColor, '#12abef');
   Object.values(ParticleSystem.SETTINGS_PRESETS).forEach((preset) => {
     assert.deepEqual(Object.keys(preset.settings).sort(), Object.keys(ParticleSystem.DEFAULT_CONFIG).sort());
   });
@@ -154,4 +158,34 @@ test('trail settings are configurable, range-normalized, and present in every pr
   assert.match(indexHtml, /data-setting="pointerTrailLifetime"/);
   assert.match(indexHtml, /data-setting="pointerTrailSize"/);
   assert.match(indexHtml, /data-setting="pointerTrailMinDistance"/);
+  assert.match(indexHtml, /data-setting="trailColor"/);
+});
+
+test('legacy scene links without trailColor load with the white default', () => {
+  const context = {
+    window: {},
+    btoa: (value) => Buffer.from(value, 'utf8').toString('base64'),
+    atob: (value) => Buffer.from(value, 'base64').toString('utf8'),
+  };
+  context.window = context;
+  context.window.ParticleSystem = {
+    clamp: (value, min, max) => Math.min(Math.max(value, min), max),
+    getSettingControl: () => null,
+    isValidHexColor: (value) => /^#[0-9a-f]{6}$/i.test(value),
+  };
+  vm.createContext(context);
+  vm.runInContext(constantsSource, context);
+  vm.runInContext(configSource, context);
+  const { ParticleSystem } = context.window;
+  const legacyValues = Object.keys(ParticleSystem.DEFAULT_CONFIG)
+    .slice(0, -1)
+    .map((key) => ParticleSystem.DEFAULT_CONFIG[key]);
+  const encoded = context.btoa(JSON.stringify([
+    ParticleSystem.CONSTANTS.SCENE_VERSION,
+    legacyValues,
+  ])).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+
+  const settings = ParticleSystem.decodeScene(encoded);
+
+  assert.equal(settings.trailColor, '#ffffff');
 });

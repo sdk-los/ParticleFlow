@@ -55,6 +55,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     trailEnabled: false,
     trailLength: 10,
     trailOpacity: 0.3,
+    trailColor: '#ffffff',
   });
 
   // Каждый пресет начинается с полной конфигурации. Это исключает случайное
@@ -339,7 +340,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'backgroundMode') {
       return ['solid', 'gradient', 'transparent'].includes(value) ? value : defaultValue;
     }
-    if (key === 'backgroundColor') {
+    if (key === 'backgroundColor' || key === 'trailColor') {
       return ParticleSystem.isValidHexColor(value) ? value : defaultValue;
     }
     if (key.startsWith('customColor')) {
@@ -362,14 +363,17 @@ window.ParticleSystem = window.ParticleSystem || {};
       const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
       const decoded = JSON.parse(window.atob(padded));
       const keys = Object.keys(ParticleSystem.DEFAULT_CONFIG);
+      const isLegacySceneWithoutTrailColor = decoded[1]?.length === keys.length - 1;
       if (!Array.isArray(decoded) || decoded.length !== 2
         || decoded[0] !== CONSTANTS.SCENE_VERSION || !Array.isArray(decoded[1])
-        || decoded[1].length !== keys.length) return null;
+        || (decoded[1].length !== keys.length && !isLegacySceneWithoutTrailColor)) return null;
 
       const settings = {};
       for (let index = 0; index < keys.length; index += 1) {
         const key = keys[index];
-        const value = decoded[1][index];
+        const value = isLegacySceneWithoutTrailColor && key === 'trailColor'
+          ? ParticleSystem.DEFAULT_CONFIG.trailColor
+          : decoded[1][index];
         const defaultValue = ParticleSystem.DEFAULT_CONFIG[key];
         const input = ParticleSystem.getSettingControl ? ParticleSystem.getSettingControl(key) : null;
         const isNumberInRange = typeof defaultValue !== 'number' || (typeof value === 'number'

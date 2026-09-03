@@ -33,7 +33,8 @@ window.ParticleSystem = window.ParticleSystem || {};
       
       // Draw trail if enabled (optimized with lineWidth gradient)
       if (config.trailEnabled && this.trail.length > 1) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${config.trailOpacity})`;
+        const [red, green, blue] = ParticleSystem.hexToRgb(config.trailColor);
+        ctx.strokeStyle = `rgba(${red}, ${green}, ${blue}, ${config.trailOpacity})`;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.beginPath();
