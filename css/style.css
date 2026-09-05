@@ -319,8 +319,36 @@
       pointer-events: none;
     }
 
-    .settings-tooltip[hidden] {
+.settings-tooltip[hidden] {
       display: none;
+    }
+
+    .adaptive-quality-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 1101;
+      max-width: min(420px, calc(100vw - 32px));
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 191, 0, 0.55);
+      border-radius: 999px;
+      background: rgba(27, 21, 10, 0.9);
+      color: #ffd77a;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      line-height: 1.25;
+      text-align: center;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .adaptive-quality-toast:not([hidden]) {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* ===== Range input ===== */

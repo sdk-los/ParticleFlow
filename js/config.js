@@ -57,6 +57,9 @@ window.ParticleSystem = window.ParticleSystem || {};
     trailLength: 10,
     trailOpacity: 0.3,
     trailColor: '#ffffff',
+    adaptiveQualityEnabled: true,
+    prioritizeLastChangedSetting: true,
+    restoreReducedSettings: false,
     performanceProfile: 'balanced',
   });
 
@@ -324,12 +327,49 @@ window.ParticleSystem = window.ParticleSystem || {};
     }),
   });
 
-  ParticleSystem.config = { ...ParticleSystem.DEFAULT_CONFIG };
+  ParticleSystem.userConfig = { ...ParticleSystem.DEFAULT_CONFIG };
+  ParticleSystem.runtimeOverrides = {};
+  ParticleSystem.config = new Proxy(ParticleSystem.userConfig, {
+    get(target, key) {
+      if (Object.prototype.hasOwnProperty.call(ParticleSystem.runtimeOverrides, key)) {
+        return ParticleSystem.runtimeOverrides[key];
+      }
+      return Reflect.get(target, key);
+    },
+    set(target, key, value) {
+      if (typeof key === 'string' && Object.prototype.hasOwnProperty.call(ParticleSystem.runtimeOverrides, key)) {
+        delete ParticleSystem.runtimeOverrides[key];
+      }
+      return Reflect.set(target, key, value);
+    },
+    deleteProperty(target, key) {
+      if (typeof key === 'string') {
+        delete ParticleSystem.runtimeOverrides[key];
+      }
+      return Reflect.deleteProperty(target, key);
+    },
+  });
+
+  ParticleSystem.getSerializableConfig = function getSerializableConfig() {
+    return Object.keys(ParticleSystem.DEFAULT_CONFIG).reduce((result, key) => {
+      result[key] = ParticleSystem.userConfig[key];
+      return result;
+    }, {});
+  };
+
+  ParticleSystem.clearRuntimeOverrides = function clearRuntimeOverrides() {
+    ParticleSystem.runtimeOverrides = {};
+  };
+
+  ParticleSystem.clearRuntimeOverrideForKey = function clearRuntimeOverrideForKey(key) {
+    if (!key || typeof key !== 'string') return;
+    delete ParticleSystem.runtimeOverrides[key];
+  };
 
   /* ── Settings persistence ── */
 
   ParticleSystem.getSceneSettings = function getSceneSettings() {
-    return Object.keys(ParticleSystem.DEFAULT_CONFIG).map((key) => ParticleSystem.config[key]);
+    return Object.keys(ParticleSystem.DEFAULT_CONFIG).map((key) => ParticleSystem.getSerializableConfig()[key]);
   };
 
   ParticleSystem.encodeScene = function encodeScene() {
@@ -464,9 +504,10 @@ window.ParticleSystem = window.ParticleSystem || {};
       if (encodedScene) console.warn('Ссылка на сцену имеет некорректный формат.');
       return false;
     }
-    Object.assign(ParticleSystem.config, settings);
-    return true;
-  };
+Object.assign(ParticleSystem.userConfig, settings);
+      ParticleSystem.clearRuntimeOverrides();
+      return true;
+    };
 
   ParticleSystem.loadSavedSettings = function loadSavedSettings() {
     try {
@@ -478,9 +519,10 @@ window.ParticleSystem = window.ParticleSystem || {};
 
       Object.keys(ParticleSystem.DEFAULT_CONFIG).forEach((key) => {
         if (Object.prototype.hasOwnProperty.call(parsedSettings, key)) {
-          ParticleSystem.config[key] = ParticleSystem.readStoredSetting(key, parsedSettings[key]);
+          ParticleSystem.userConfig[key] = ParticleSystem.readStoredSetting(key, parsedSettings[key]);
         }
       });
+      ParticleSystem.clearRuntimeOverrides();
     } catch (error) {
       console.warn('Не удалось загрузить настройки:', error);
     }
@@ -488,7 +530,7 @@ window.ParticleSystem = window.ParticleSystem || {};
 
   ParticleSystem.saveSettings = function saveSettings() {
     try {
-      window.localStorage.setItem(CONSTANTS.STORAGE_KEY, JSON.stringify(ParticleSystem.config));
+      window.localStorage.setItem(CONSTANTS.STORAGE_KEY, JSON.stringify(ParticleSystem.getSerializableConfig()));
     } catch (error) {
       console.warn('Не удалось сохранить настройки:', error);
     }

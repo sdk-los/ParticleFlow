@@ -613,6 +613,48 @@
 
         <div class="control-group">
           <div class="control-label">
+            <span>Адаптивное качество</span>
+            <button class="setting-help" type="button" data-tooltip="Автоматически снижает нагрузку на слабых устройствах, если FPS стабильно падает ниже 30, и возвращает параметры после восстановления." aria-label="Что такое адаптивное качество?">?</button>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="adaptiveQualityEnabled" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включена</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Сначала уменьшать последнюю изменённую настройку</span>
+            <button class="setting-help" type="button" data-tooltip="Когда включено, система сначала снижает тот тяжёлый параметр, который был изменён последним вручную. Иначе используется общий порядок приоритета." aria-label="Что означает приоритет последней настройки?">?</button>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="prioritizeLastChangedSetting" checked>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включена</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Возвращать уменьшенное значение</span>
+            <button class="setting-help" type="button" data-tooltip="Если включено, после восстановления FPS система возвращает уменьшенные параметры к исходному уровню. Если выключено — изменение останется в сниженной форме." aria-label="Что делает возврат уменьшенного значения?">?</button>
+          </div>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" data-setting="restoreReducedSettings">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Включена</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
             <span>Свечение (ShadowBlur)</span>
             <button class="setting-help" type="button" data-tooltip="Размытое свечение вокруг частиц. Большие значения сильнее нагружают устройство и отключают тропы частиц." aria-label="Что такое свечение ShadowBlur?">?</button>
             <span class="control-value" data-display="shadowBlur">0</span>
@@ -632,6 +674,13 @@
             </label>
             <span class="toggle-label">Выключено</span>
           </div>
+        </div>
+
+        <div class="control-group" aria-live="polite">
+          <div class="control-label">
+            <span>Статус оптимизации</span>
+          </div>
+          <div id="adaptive-quality-status" class="status-message" hidden></div>
         </div>
 
         <div class="control-group">
@@ -708,6 +757,7 @@
   </div>
 
   <div id="settings-tooltip" class="settings-tooltip" role="tooltip" hidden></div>
+  <div id="adaptive-quality-toast" class="adaptive-quality-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
 
   <script src="js/constants.js"></script>
   <script src="js/config.js"></script>

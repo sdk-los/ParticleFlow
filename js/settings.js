@@ -160,7 +160,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.getToggleLabelText = function getToggleLabelText(key, checked) {
-    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps' || key === 'selfDriftEnabled' || key === 'selfDriftOrbitRepulsionEnabled' || key === 'cursorInteractionEnabled') {
+    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps' || key === 'selfDriftEnabled' || key === 'selfDriftOrbitRepulsionEnabled' || key === 'cursorInteractionEnabled' || key === 'adaptiveQualityEnabled' || key === 'prioritizeLastChangedSetting' || key === 'restoreReducedSettings') {
       return checked ? 'Включена' : 'Выключена';
     }
     return checked ? 'Включены' : 'Выключены';
@@ -429,6 +429,9 @@ window.ParticleSystem = window.ParticleSystem || {};
     }
 
     config[key] = value;
+    if (ParticleSystem.ADAPTIVE_QUALITY_ORDER.includes(key)) {
+      ParticleSystem.markHeavySettingChange(key);
+    }
     if (key === 'colorPalette') ParticleSystem.syncCustomPaletteVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftDirectionVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitVisibility();
@@ -444,6 +447,8 @@ window.ParticleSystem = window.ParticleSystem || {};
   /* ── Reset & Presets ── */
   ParticleSystem.resetSettings = function resetSettings() {
     Object.assign(config, DEFAULT_CONFIG);
+    ParticleSystem.clearRuntimeOverrides();
+    ParticleSystem.resetAdaptiveQualityState();
     ParticleSystem.clearSavedSettings();
     ParticleSystem.syncControlsFromConfig();
     ParticleSystem.syncCursorMode();
@@ -476,6 +481,8 @@ window.ParticleSystem = window.ParticleSystem || {};
     const performanceProfile = config.performanceProfile;
     Object.assign(config, preset.settings);
     config.performanceProfile = performanceProfile;
+    ParticleSystem.clearRuntimeOverrides();
+    ParticleSystem.resetAdaptiveQualityState();
     ParticleSystem.clampConfigToPerformanceProfile();
     
     // Разрешаем конфликты между shadowBlur и trailEnabled

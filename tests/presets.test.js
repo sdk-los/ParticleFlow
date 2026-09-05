@@ -46,3 +46,15 @@ test('new presets keep conflicting or compounding expensive effects apart', () =
   assert.equal(fireworks.settings.explosionSpeed, 15);
   assert.equal(fireworks.settings.showConnections, false);
 });
+
+test('adaptive quality flags are present in default settings and persisted scene data', () => {
+  const { DEFAULT_CONFIG, SETTINGS_PRESETS } = loadPresets();
+
+  assert.equal(DEFAULT_CONFIG.adaptiveQualityEnabled, true);
+  assert.equal(DEFAULT_CONFIG.prioritizeLastChangedSetting, true);
+  assert.equal(DEFAULT_CONFIG.restoreReducedSettings, false);
+  assert.deepEqual(Object.keys(SETTINGS_PRESETS.calm.settings).sort(), Object.keys(DEFAULT_CONFIG).sort());
+  assert.equal(Object.keys(DEFAULT_CONFIG).includes('adaptiveQualityEnabled'), true);
+  assert.equal(Object.keys(DEFAULT_CONFIG).includes('prioritizeLastChangedSetting'), true);
+  assert.equal(Object.keys(DEFAULT_CONFIG).includes('restoreReducedSettings'), true);
+});
