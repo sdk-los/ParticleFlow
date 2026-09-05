@@ -79,41 +79,81 @@ test('disabling cursor interaction clears the active pointer trail', () => {
   assert.equal(context.window.ParticleSystem.pointerTrails.length, 0);
 });
 
-test('pointer trail lifetime removes expired points and size controls rendered radius', () => {
-  const arcs = [];
+test('pointer trail lifetime removes expired points and draws each remaining point as a cached sprite', () => {
+  const blits = [];
   const context = {
     window: { innerWidth: 100, innerHeight: 100 },
   };
   context.window.window = context.window;
   context.window.ParticleSystem = {
-    CONSTANTS: { TAU: Math.PI * 2 },
-    config: { pointerTrailLifetime: 700, pointerTrailSize: 20 },
+    config: { pointerTrailLifetime: 700, pointerTrailSize: 20, pointerTrailShape: 'star' },
     pointerTrails: [
       { x: 1, y: 2, createdAt: 100, color: '#111111' },
       { x: 3, y: 4, createdAt: 500, color: '#222222' },
     ],
+    getPointerTrailSprite: (color) => ({ canvas: { width: 40 }, baseRadius: 20 }),
     ctx: {
-      save: () => {}, restore: () => {}, beginPath: () => {}, fill: () => {},
-      arc: (x, y, radius) => arcs.push({ x, y, radius }),
+      save: () => {}, restore: () => {},
+      set globalAlpha(value) {}, set fillStyle(value) {}, set shadowColor(value) {}, set shadowBlur(value) {},
+      drawImage: (canvas, x, y, width, height) => blits.push({ canvas, x, y, width, height }),
     },
   };
   vm.createContext(context);
   vm.runInContext(rendererSource, context);
+  context.window.ParticleSystem.getPointerTrailSprite = () => ({ canvas: { width: 40 }, baseRadius: 20 });
   context.window.ParticleSystem.ctx = {
-    save: () => {}, restore: () => {}, beginPath: () => {}, fill: () => {},
-    arc: (x, y, radius) => arcs.push({ x, y, radius }),
+    save: () => {}, restore: () => {},
+    set globalAlpha(value) {}, set fillStyle(value) {}, set shadowColor(value) {}, set shadowBlur(value) {},
+    drawImage: (canvas, x, y, width, height) => blits.push({ canvas, x, y, width, height }),
   };
 
   context.window.ParticleSystem.drawPointerTrails(1000);
 
+  const scale = (1 - 500 / 700);
+  const drawSize = 40 * scale;
   assert.equal(context.window.ParticleSystem.pointerTrails.length, 1);
-  assert.deepEqual(arcs, [{ x: 3, y: 4, radius: 20 * (1 - 500 / 700) }]);
+  assert.equal(blits.length, 1);
+  assert.equal(blits[0].x, 3 - drawSize / 2);
+  assert.equal(blits[0].y, 4 - drawSize / 2);
+  assert.equal(blits[0].width, drawSize);
+  assert.equal(blits[0].height, drawSize);
+});
+
+test('trail shape sprites are cached per shape/color and reused without rebuilding paths', () => {
+  const shapes = [];
+  const context = {
+    window: { innerWidth: 100, innerHeight: 100 },
+  };
+  context.window.window = context.window;
+  context.window.ParticleSystem = {
+    config: { pointerTrailSize: 20, pointerTrailShape: 'star', shadowBlur: 10 },
+    drawShape: (ctx, x, y, radius, shape) => shapes.push(shape),
+  };
+  context.document = {
+    createElement: (tag) => ({
+      getContext: () => ({
+        save: () => {}, restore: () => {},
+        set fillStyle(value) {}, set shadowColor(value) {}, set shadowBlur(value) {},
+      }),
+    }),
+  };
+  vm.createContext(context);
+  vm.runInContext(rendererSource, context);
+  const { ParticleSystem } = context.window;
+
+  const first = ParticleSystem.getPointerTrailSprite('#abcdef');
+  const second = ParticleSystem.getPointerTrailSprite('#abcdef');
+  const otherColor = ParticleSystem.getPointerTrailSprite('#000000');
+
+  assert.equal(first, second);
+  assert.notEqual(first, otherColor);
+  assert.deepEqual(shapes, ['star', 'star']);
 });
 
 test('trail settings are configurable, range-normalized, and present in every preset', () => {
   let savedSettings = null;
   const controlRanges = {
-    pointerTrailLifetime: { min: '150', max: '2000' },
+    pointerTrailLifetime: { min: '150', max: '5000' },
     pointerTrailSize: { min: '6', max: '50' },
     pointerTrailMinDistance: { min: '2', max: '30' },
   };
@@ -141,16 +181,20 @@ test('trail settings are configurable, range-normalized, and present in every pr
   assert.equal(ParticleSystem.readStoredSetting('pointerTrailMinDistance', 0), 2);
   assert.equal(ParticleSystem.readStoredSetting('trailColor', '#12abef'), '#12abef');
   assert.equal(ParticleSystem.readStoredSetting('trailColor', 'blue'), '#ffffff');
+  assert.equal(ParticleSystem.readStoredSetting('pointerTrailShape', 'star'), 'star');
+  assert.equal(ParticleSystem.readStoredSetting('pointerTrailShape', 'arrow'), 'circle');
   ParticleSystem.config.pointerTrailLifetime = 1200;
   ParticleSystem.config.pointerTrailSize = 32;
   ParticleSystem.config.pointerTrailMinDistance = 4;
   ParticleSystem.config.trailColor = '#12abef';
+  ParticleSystem.config.pointerTrailShape = 'heart';
   ParticleSystem.saveSettings();
   const persistedSettings = JSON.parse(savedSettings);
   assert.equal(persistedSettings.pointerTrailLifetime, 1200);
   assert.equal(persistedSettings.pointerTrailSize, 32);
   assert.equal(persistedSettings.pointerTrailMinDistance, 4);
   assert.equal(persistedSettings.trailColor, '#12abef');
+  assert.equal(persistedSettings.pointerTrailShape, 'heart');
   Object.values(ParticleSystem.SETTINGS_PRESETS).forEach((preset) => {
     assert.deepEqual(Object.keys(preset.settings).sort(), Object.keys(ParticleSystem.DEFAULT_CONFIG).sort());
   });
@@ -159,6 +203,7 @@ test('trail settings are configurable, range-normalized, and present in every pr
   assert.match(indexHtml, /data-setting="pointerTrailSize"/);
   assert.match(indexHtml, /data-setting="pointerTrailMinDistance"/);
   assert.match(indexHtml, /data-setting="trailColor"/);
+  assert.match(indexHtml, /data-setting="pointerTrailShape"/);
 });
 
 test('legacy scene links without trailColor load with the white default', () => {

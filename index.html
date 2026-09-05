@@ -325,7 +325,7 @@
             <button class="setting-help" type="button" data-tooltip="Как долго точки следа остаются видимыми после движения курсора." aria-label="Что означает длительность следа?">?</button>
             <span class="control-value" data-display="pointerTrailLifetime">700 мс</span>
           </div>
-          <input type="range" data-setting="pointerTrailLifetime" min="150" max="2000" step="50" value="700">
+          <input type="range" data-setting="pointerTrailLifetime" min="150" max="5000" step="50" value="700">
         </div>
 
         <div class="control-group" data-cursor-trail-setting hidden>
@@ -344,6 +344,24 @@
             <span class="control-value" data-display="pointerTrailMinDistance">8 px</span>
           </div>
           <input type="range" data-setting="pointerTrailMinDistance" min="2" max="30" step="1" value="8">
+        </div>
+
+        <div class="control-group" data-cursor-trail-setting hidden>
+          <div class="control-label">
+            <span>Форма следа</span>
+            <button class="setting-help" type="button" data-tooltip="Форма точек следа, остающихся за курсором в режиме «След»." aria-label="Что такое форма следа?">?</button>
+          </div>
+          <select data-setting="pointerTrailShape" class="select-control">
+            <option value="circle">Круг</option>
+            <option value="square">Квадрат</option>
+            <option value="triangle">Треугольник</option>
+            <option value="diamond">Ромб</option>
+            <option value="star">Звезда</option>
+            <option value="ring">Кольцо</option>
+            <option value="heart">Сердце</option>
+            <option value="drop">Капля</option>
+            <option value="cross">Крест</option>
+          </select>
         </div>
       </div>
     </details>

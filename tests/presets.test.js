@@ -42,7 +42,7 @@ test('new presets keep conflicting or compounding expensive effects apart', () =
   assert.equal(aurora.settings.showConnections, false);
   assert.equal(aurora.settings.shadowBlur, 0);
   assert.equal(fireworks.settings.explosionMode, 'spawn');
-  assert.equal(fireworks.settings.explosionCount, 100);
+  assert.equal(fireworks.settings.explosionCount, 150);
   assert.equal(fireworks.settings.explosionSpeed, 15);
   assert.equal(fireworks.settings.showConnections, false);
 });

@@ -2,7 +2,7 @@
 window.ParticleSystem = window.ParticleSystem || {};
 
 (function () {
-  const { ParticleSystem, ParticleSystem: { CONSTANTS, config } } = window;
+  const { ParticleSystem, ParticleSystem: { config } } = window;
 
   ParticleSystem.ctx = null;
   ParticleSystem.canvasBounds = {
@@ -142,6 +142,40 @@ window.ParticleSystem = window.ParticleSystem || {};
     }
   };
 
+  // Кэш спрайтов формы следа. Каждая (форма, цвет) рендерится один раз в
+  // offscreen canvas с учётом свечения, а затем каждый кадр просто блитится
+  // через drawImage. Это превращает построение сложных векторных путей (звезда,
+  // кольцо, сердце и т.п.) для каждой точки следа в один быстрый вызов blit.
+  ParticleSystem.pointerTrailSprites = {};
+
+  ParticleSystem.getPointerTrailSprite = function getPointerTrailSprite(color) {
+    const shape = config.pointerTrailShape;
+    const shadowBlur = config.shadowBlur + 12;
+    const key = `${shape}|${color}|${config.pointerTrailSize}|${shadowBlur}`;
+    if (ParticleSystem.pointerTrailSprites[key]) return ParticleSystem.pointerTrailSprites[key];
+
+    // Базовый радиус — максимальный размер точки следа. Уменьшение масштаба при
+    // затухании выполняется drawImage, поэтому пути строятся только один раз.
+    const baseRadius = config.pointerTrailSize;
+    const glowPad = shadowBlur;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.ceil(baseRadius * 2 + glowPad * 2);
+    canvas.height = Math.ceil(baseRadius * 2 + glowPad * 2);
+    const spriteCtx = canvas.getContext('2d');
+    const center = canvas.width / 2;
+
+    spriteCtx.save();
+    spriteCtx.fillStyle = color;
+    spriteCtx.shadowColor = color;
+    spriteCtx.shadowBlur = shadowBlur;
+    ParticleSystem.drawShape(spriteCtx, center, center, baseRadius, shape);
+    spriteCtx.restore();
+
+    const sprite = { canvas, baseRadius };
+    ParticleSystem.pointerTrailSprites[key] = sprite;
+    return sprite;
+  };
+
   ParticleSystem.drawPointerTrails = function drawPointerTrails(timestamp) {
     if (ParticleSystem.pointerTrails.length === 0) return;
 
@@ -155,15 +189,20 @@ window.ParticleSystem = window.ParticleSystem || {};
       const age = timestamp - point.createdAt;
       const life = 1 - age / config.pointerTrailLifetime;
       const radius = config.pointerTrailSize * life;
+      const sprite = ParticleSystem.getPointerTrailSprite(point.color);
+
+      const scale = radius / sprite.baseRadius;
+      const drawSize = sprite.canvas.width * scale;
 
       ctx.save();
       ctx.globalAlpha = Math.max(0, life * 0.55);
-      ctx.fillStyle = point.color;
-      ctx.shadowColor = point.color;
-      ctx.shadowBlur = config.shadowBlur + 12;
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, radius, 0, CONSTANTS.TAU);
-      ctx.fill();
+      ctx.drawImage(
+        sprite.canvas,
+        point.x - drawSize / 2,
+        point.y - drawSize / 2,
+        drawSize,
+        drawSize
+      );
       ctx.restore();
     });
   };

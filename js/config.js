@@ -29,6 +29,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     pointerTrailLifetime: 700,
     pointerTrailSize: 26,
     pointerTrailMinDistance: 8,
+    pointerTrailShape: 'circle',
     shadowBlur: 0,
     pulsate: true,
     bounce: true,
@@ -307,17 +308,19 @@ window.ParticleSystem = window.ParticleSystem || {};
       customColor2: '#fb7185',
       customColor3: '#a78bfa',
       cursorMode: 'repel',
-      attractionForce: 0.45,
+      attractionForce: 0.86,
       attractionRadius: 150,
       pulsate: true,
       backgroundMode: 'solid',
       backgroundColor: '#10051d',
       explosionEnabled: true,
-      explosionCount: 100,
+      explosionCount: 150,
       explosionSpeed: 15,
       explosionLifetime: 1200,
       explosionSize: 4,
       explosionMode: 'spawn',
+      trailEnabled: true,
+      trailLength: 15,
     }),
   });
 
@@ -392,6 +395,11 @@ window.ParticleSystem = window.ParticleSystem || {};
     }
     if (key === 'selfDriftMode') {
       return ['random', 'horizontal', 'vertical', 'upDown', 'leftRight', 'up', 'down', 'left', 'right', 'directional', 'orbit', 'orbitGlobal', 'wave', 'flow', 'lissajous', 'vortex', 'spiral', 'spiralIndividual', 'snake'].includes(value)
+        ? value
+        : defaultValue;
+    }
+    if (key === 'pointerTrailShape') {
+      return ['circle', 'square', 'triangle', 'diamond', 'star', 'ring', 'heart', 'drop', 'cross'].includes(value)
         ? value
         : defaultValue;
     }
