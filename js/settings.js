@@ -160,7 +160,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.getToggleLabelText = function getToggleLabelText(key, checked) {
-    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps' || key === 'selfDriftEnabled' || key === 'selfDriftOrbitRepulsionEnabled' || key === 'cursorInteractionEnabled' || key === 'adaptiveQualityEnabled' || key === 'prioritizeLastChangedSetting' || key === 'restoreReducedSettings') {
+    if (key === 'bounce' || key === 'showParticleCount' || key === 'showFps' || key === 'selfDriftEnabled' || key === 'selfDriftOrbitRepulsionEnabled' || key === 'cursorInteractionEnabled' || key === 'adaptiveQualityEnabled' || key === 'prioritizeLastChangedSetting') {
       return checked ? 'Включена' : 'Выключена';
     }
     return checked ? 'Включены' : 'Выключены';

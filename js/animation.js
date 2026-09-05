@@ -9,7 +9,6 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.fpsLastTime = 0;
   ParticleSystem.adaptiveQualityState = {
     lowFpsStreak: 0,
-    highFpsStreak: 0,
     lastAdjustmentAt: 0,
     activeAdjustments: [],
     lastStatus: '',
@@ -79,70 +78,62 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.adaptiveQualityState.lastHeavySettingKey = key;
     delete ParticleSystem.runtimeOverrides[key];
     ParticleSystem.adaptiveQualityState.activeAdjustments = ParticleSystem.adaptiveQualityState.activeAdjustments.filter((item) => item !== key);
+    // Пользователь вручную изменил «тяжёлую» настройку — начинаем новый эпизод.
+    ParticleSystem.syncAdaptiveQualityControl(key);
+  };
+
+  ParticleSystem.syncAdaptiveQualityControl = function syncAdaptiveQualityControl(key) {
+    if (!key || typeof key !== 'string') return;
+    const control = ParticleSystem.getSettingControl ? ParticleSystem.getSettingControl(key) : null;
+    if (control && ParticleSystem.syncControl) {
+      ParticleSystem.syncControl(control);
+    }
+  };
+
+  ParticleSystem.canReduceAdaptiveSetting = function canReduceAdaptiveSetting(key) {
+    const currentValue = config[key];
+    if (key === 'particleCount') return currentValue > 80;
+    if (key === 'shadowBlur') return currentValue > 0;
+    if (key === 'trailLength') return currentValue > 4;
+    if (key === 'showConnections') return currentValue === true;
+    if (key === 'auroraEnabled') return currentValue === true;
+    return false;
   };
 
   ParticleSystem.getAdaptiveQualityCandidate = function getAdaptiveQualityCandidate() {
     const preferred = ParticleSystem.getAdaptiveQualityPriorityKey();
-    if (preferred) return preferred;
-    return ParticleSystem.ADAPTIVE_QUALITY_ORDER.find((key) => {
-      const currentValue = config[key];
-      if (key === 'particleCount') return currentValue > 80;
-      if (key === 'shadowBlur') return currentValue > 0;
-      if (key === 'trailLength') return currentValue > 4;
-      if (key === 'showConnections') return currentValue === true;
-      if (key === 'auroraEnabled') return currentValue === true;
-      return false;
-    }) || null;
+    // Приоритетная настройка учитывается, только если её ещё можно снизить.
+    // Иначе переходим к другим «тяжёлым» настройкам, чтобы не блокировать оптимизацию.
+    if (preferred && ParticleSystem.canReduceAdaptiveSetting(preferred)) return preferred;
+    return ParticleSystem.ADAPTIVE_QUALITY_ORDER.find((key) =>
+      ParticleSystem.canReduceAdaptiveSetting(key)
+    ) || null;
   };
 
-  ParticleSystem.getAdaptiveQualityRestoreCandidate = function getAdaptiveQualityRestoreCandidate() {
-    if (!config.restoreReducedSettings) return null;
-    return [...ParticleSystem.ADAPTIVE_QUALITY_ORDER].reverse().find((key) => {
-      return Object.prototype.hasOwnProperty.call(ParticleSystem.runtimeOverrides, key);
-    }) || null;
-  };
-
-  ParticleSystem.applyAdaptiveQualityStep = function applyAdaptiveQualityStep(direction) {
+  // Применяет снижение сразу и сохраняет его в userConfig. Так как возврат
+  // уменьшенных значений удалён, снижение становится постоянным и переживает
+  // перезагрузку страницы — как если бы его задал сам пользователь.
+  ParticleSystem.applyAdaptiveQualityStep = function applyAdaptiveQualityStep() {
     if (!config.adaptiveQualityEnabled) return false;
 
-    const key = direction === 'degrade'
-      ? ParticleSystem.getAdaptiveQualityCandidate()
-      : ParticleSystem.getAdaptiveQualityRestoreCandidate();
+    const key = ParticleSystem.getAdaptiveQualityCandidate();
     if (!key) return false;
 
-    const state = ParticleSystem.adaptiveQualityState;
-    if (direction === 'degrade') {
-      const currentValue = config[key];
-      let nextValue = currentValue;
+    const currentValue = config[key];
+    let nextValue = currentValue;
 
-      if (key === 'showConnections') nextValue = false;
-      else if (key === 'auroraEnabled') nextValue = false;
-      else if (key === 'particleCount') nextValue = Math.max(80, Math.round(currentValue * 0.75));
-      else if (key === 'shadowBlur') nextValue = Math.max(0, currentValue - 10);
-      else if (key === 'trailLength') nextValue = Math.max(4, currentValue - 4);
+    if (key === 'showConnections') nextValue = false;
+    else if (key === 'auroraEnabled') nextValue = false;
+    else if (key === 'particleCount') nextValue = Math.max(80, Math.round(currentValue * 0.75));
+    else if (key === 'shadowBlur') nextValue = Math.max(0, currentValue - 10);
+    else if (key === 'trailLength') nextValue = Math.max(4, currentValue - 4);
 
-      if (nextValue === currentValue) return false;
+    if (nextValue === currentValue) return false;
 
-      ParticleSystem.runtimeOverrides[key] = nextValue;
-      if (key === 'particleCount') {
-        ParticleSystem.createParticles();
-      }
-      if (key === 'shadowBlur') {
-        ParticleSystem.updateParticleShadowBlur();
-      }
-      if (key === 'trailLength') {
-        ParticleSystem.particles.forEach((particle) => {
-          particle.maxTrailLength = config.trailLength;
-        });
-      }
+    // Прямая запись через config: прокси очищает runtimeOverride (если был)
+    // и пишет в userConfig, затем сохранение делает значение постоянным.
+    config[key] = nextValue;
 
-      state.activeAdjustments = [...new Set([...state.activeAdjustments, key])];
-      state.lastAdjustmentAt = performance.now();
-      ParticleSystem.notifyAdaptiveQualityStatus(`Оптимизация: уменьшено ${key}.`);
-      return true;
-    }
-
-    delete ParticleSystem.runtimeOverrides[key];
     if (key === 'particleCount') {
       ParticleSystem.createParticles();
     }
@@ -155,53 +146,41 @@ window.ParticleSystem = window.ParticleSystem || {};
       });
     }
 
-    state.activeAdjustments = state.activeAdjustments.filter((item) => item !== key);
+    if (ParticleSystem.saveSettings) ParticleSystem.saveSettings();
+
+    const state = ParticleSystem.adaptiveQualityState;
+    state.activeAdjustments = [...new Set([...state.activeAdjustments, key])];
     state.lastAdjustmentAt = performance.now();
-    ParticleSystem.notifyAdaptiveQualityStatus(`Оптимизация: восстановлено ${key}.`);
+    ParticleSystem.notifyAdaptiveQualityStatus(`Оптимизация: уменьшено ${key}.`);
+    ParticleSystem.syncAdaptiveQualityControl(key);
     return true;
   };
 
   ParticleSystem.trackAdaptiveQualityFps = function trackAdaptiveQualityFps(fps) {
+    const state = ParticleSystem.adaptiveQualityState;
     if (!config.adaptiveQualityEnabled) {
       ParticleSystem.clearAdaptiveQualityStatus();
       state.lowFpsStreak = 0;
-      state.highFpsStreak = 0;
       return;
     }
 
-    const state = ParticleSystem.adaptiveQualityState;
+    const now = performance.now();
+
     if (fps < 30) {
       state.lowFpsStreak += 1;
-      state.highFpsStreak = 0;
     } else {
       state.lowFpsStreak = 0;
-      if (fps >= 50) state.highFpsStreak += 1;
-      else state.highFpsStreak = 0;
     }
 
-    const now = performance.now();
     const cooldownPassed = now - state.lastAdjustmentAt > 1500;
 
+    // Снижение применяется и сохраняется сразу (см. applyAdaptiveQualityStep),
+    // поэтому кумулятивный таймер фиксации не нужен.
     if (state.lowFpsStreak >= 3 && cooldownPassed) {
-      const degraded = ParticleSystem.applyAdaptiveQualityStep('degrade');
+      const degraded = ParticleSystem.applyAdaptiveQualityStep();
       if (degraded) {
         state.lowFpsStreak = 0;
-        state.highFpsStreak = 0;
       }
-    }
-
-    if (config.restoreReducedSettings && state.highFpsStreak >= 10 && state.activeAdjustments.length > 0 && cooldownPassed) {
-      const restored = ParticleSystem.applyAdaptiveQualityStep('restore');
-      if (restored) {
-        state.highFpsStreak = 0;
-      }
-    }
-
-    if (!config.restoreReducedSettings && state.highFpsStreak >= 10 && state.activeAdjustments.length > 0 && cooldownPassed) {
-      state.activeAdjustments = [];
-      ParticleSystem.clearRuntimeOverrides();
-      ParticleSystem.notifyAdaptiveQualityStatus('Оптимизация: сниженные параметры сохранены.');
-      state.highFpsStreak = 0;
     }
   };
 
@@ -268,7 +247,6 @@ window.ParticleSystem = window.ParticleSystem || {};
   ParticleSystem.resetAdaptiveQualityState = function resetAdaptiveQualityState() {
     ParticleSystem.adaptiveQualityState = {
       lowFpsStreak: 0,
-      highFpsStreak: 0,
       lastAdjustmentAt: 0,
       activeAdjustments: [],
       lastStatus: '',

@@ -52,9 +52,10 @@ test('adaptive quality flags are present in default settings and persisted scene
 
   assert.equal(DEFAULT_CONFIG.adaptiveQualityEnabled, true);
   assert.equal(DEFAULT_CONFIG.prioritizeLastChangedSetting, true);
-  assert.equal(DEFAULT_CONFIG.restoreReducedSettings, false);
   assert.deepEqual(Object.keys(SETTINGS_PRESETS.calm.settings).sort(), Object.keys(DEFAULT_CONFIG).sort());
   assert.equal(Object.keys(DEFAULT_CONFIG).includes('adaptiveQualityEnabled'), true);
   assert.equal(Object.keys(DEFAULT_CONFIG).includes('prioritizeLastChangedSetting'), true);
-  assert.equal(Object.keys(DEFAULT_CONFIG).includes('restoreReducedSettings'), true);
+  // Настройка «Возвращать уменьшенное значение» удалена: снижения применяются
+  // сразу и сохраняются в userConfig, поэтому такого ключа быть не должно.
+  assert.equal(Object.keys(DEFAULT_CONFIG).includes('restoreReducedSettings'), false);
 });

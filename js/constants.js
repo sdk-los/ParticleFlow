@@ -20,6 +20,7 @@ window.ParticleSystem = window.ParticleSystem || {};
     ATTR_DISPLAY: 'data-display',
     ATTR_PRESET: 'data-preset',
     STORAGE_KEY: 'particleSystemSettings',
+    STORAGE_KEY_PRIORITY: 'particleSystemAdaptivePriority',
     SCENE_HASH_PARAM: 'scene',
     SCENE_VERSION: 1,
     SCENE_MAX_LENGTH: 2048,

@@ -59,7 +59,6 @@ window.ParticleSystem = window.ParticleSystem || {};
     trailColor: '#ffffff',
     adaptiveQualityEnabled: true,
     prioritizeLastChangedSetting: true,
-    restoreReducedSettings: false,
     performanceProfile: 'balanced',
   });
 
@@ -512,16 +511,22 @@ Object.assign(ParticleSystem.userConfig, settings);
   ParticleSystem.loadSavedSettings = function loadSavedSettings() {
     try {
       const savedSettings = window.localStorage.getItem(CONSTANTS.STORAGE_KEY);
-      if (!savedSettings) return;
-
-      const parsedSettings = JSON.parse(savedSettings);
-      if (!parsedSettings || typeof parsedSettings !== 'object') return;
-
-      Object.keys(ParticleSystem.DEFAULT_CONFIG).forEach((key) => {
-        if (Object.prototype.hasOwnProperty.call(parsedSettings, key)) {
-          ParticleSystem.userConfig[key] = ParticleSystem.readStoredSetting(key, parsedSettings[key]);
+      if (savedSettings) {
+        const parsedSettings = JSON.parse(savedSettings);
+        if (parsedSettings && typeof parsedSettings === 'object') {
+          Object.keys(ParticleSystem.DEFAULT_CONFIG).forEach((key) => {
+            if (Object.prototype.hasOwnProperty.call(parsedSettings, key)) {
+              ParticleSystem.userConfig[key] = ParticleSystem.readStoredSetting(key, parsedSettings[key]);
+            }
+          });
         }
-      });
+      }
+
+      // Восстанавливаем «последнюю изменённую тяжёлую настройку», чтобы после
+      // перезагрузки система снова приоритетно снижала именно её, а не переходила
+      // к particleCount по порядку списка.
+      ParticleSystem.restoreAdaptivePriorityKey();
+
       ParticleSystem.clearRuntimeOverrides();
     } catch (error) {
       console.warn('Не удалось загрузить настройки:', error);
@@ -531,14 +536,53 @@ Object.assign(ParticleSystem.userConfig, settings);
   ParticleSystem.saveSettings = function saveSettings() {
     try {
       window.localStorage.setItem(CONSTANTS.STORAGE_KEY, JSON.stringify(ParticleSystem.getSerializableConfig()));
+      ParticleSystem.persistAdaptivePriorityKey();
     } catch (error) {
       console.warn('Не удалось сохранить настройки:', error);
+    }
+  };
+
+  ParticleSystem.persistAdaptivePriorityKey = function persistAdaptivePriorityKey() {
+    try {
+      const key = ParticleSystem.adaptiveQualityState
+        ? ParticleSystem.adaptiveQualityState.lastHeavySettingKey
+        : null;
+      if (key && ParticleSystem.ADAPTIVE_QUALITY_ORDER && ParticleSystem.ADAPTIVE_QUALITY_ORDER.includes(key)) {
+        window.localStorage.setItem(CONSTANTS.STORAGE_KEY_PRIORITY, key);
+      } else {
+        window.localStorage.removeItem(CONSTANTS.STORAGE_KEY_PRIORITY);
+      }
+    } catch (error) {
+      console.warn('Не удалось сохранить приоритет адаптивного качества:', error);
+    }
+  };
+
+  ParticleSystem.restoreAdaptivePriorityKey = function restoreAdaptivePriorityKey() {
+    try {
+      const stored = window.localStorage.getItem(CONSTANTS.STORAGE_KEY_PRIORITY);
+      if (
+        stored &&
+        ParticleSystem.ADAPTIVE_QUALITY_ORDER &&
+        ParticleSystem.ADAPTIVE_QUALITY_ORDER.includes(stored)
+      ) {
+        if (!ParticleSystem.adaptiveQualityState) {
+          if (typeof ParticleSystem.resetAdaptiveQualityState === 'function') {
+            ParticleSystem.resetAdaptiveQualityState();
+          } else {
+            ParticleSystem.adaptiveQualityState = {};
+          }
+        }
+        ParticleSystem.adaptiveQualityState.lastHeavySettingKey = stored;
+      }
+    } catch (error) {
+      console.warn('Не удалось восстановить приоритет адативного качества:', error);
     }
   };
 
   ParticleSystem.clearSavedSettings = function clearSavedSettings() {
     try {
       window.localStorage.removeItem(CONSTANTS.STORAGE_KEY);
+      window.localStorage.removeItem(CONSTANTS.STORAGE_KEY_PRIORITY);
     } catch (error) {
       console.warn('Не удалось сбросить сохранённые настройки:', error);
     }
