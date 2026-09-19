@@ -358,17 +358,26 @@ window.ParticleSystem = window.ParticleSystem || {};
     });
   };
 
-  ParticleSystem.syncCursorTrailSettingsVisibility = function syncCursorTrailSettingsVisibility() {
+  ParticleSystem.syncCursorInteractionSettingsVisibility = function syncCursorInteractionSettingsVisibility() {
     const panel = document.getElementById('settings-panel');
     if (!panel) return;
 
-    const isTrailMode = config.cursorMode === 'trail';
+    const isEnabled = config.cursorInteractionEnabled;
+    const isTrailMode = isEnabled && config.cursorMode === 'trail';
+
+    panel.querySelectorAll('[data-cursor-mode-setting]').forEach((group) => {
+      group.hidden = !isEnabled;
+    });
     panel.querySelectorAll('[data-cursor-trail-setting]').forEach((group) => {
       group.hidden = !isTrailMode;
     });
     panel.querySelectorAll('[data-cursor-interaction-setting]').forEach((group) => {
-      group.hidden = isTrailMode;
+      group.hidden = !isEnabled || isTrailMode;
     });
+  };
+
+  ParticleSystem.syncCursorTrailSettingsVisibility = function syncCursorTrailSettingsVisibility() {
+    ParticleSystem.syncCursorInteractionSettingsVisibility();
   };
 
   ParticleSystem.syncDepthSettingsVisibility = function syncDepthSettingsVisibility() {
@@ -377,6 +386,60 @@ window.ParticleSystem = window.ParticleSystem || {};
 
     panel.querySelectorAll('[data-depth-setting]').forEach((group) => {
       group.hidden = !config.depthEnabled;
+    });
+  };
+
+  ParticleSystem.syncBackgroundGradientSettingsVisibility = function syncBackgroundGradientSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    panel.querySelectorAll('[data-background-gradient-setting]').forEach((group) => {
+      group.hidden = config.backgroundMode !== 'gradient';
+    });
+  };
+
+  ParticleSystem.syncAuroraSettingsVisibility = function syncAuroraSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    panel.querySelectorAll('[data-aurora-setting]').forEach((group) => {
+      group.hidden = !config.auroraEnabled;
+    });
+  };
+
+  ParticleSystem.syncConnectionSettingsVisibility = function syncConnectionSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    panel.querySelectorAll('[data-connection-setting]').forEach((group) => {
+      group.hidden = !config.showConnections;
+    });
+  };
+
+  ParticleSystem.syncTrailSettingsVisibility = function syncTrailSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    panel.querySelectorAll('[data-trail-setting]').forEach((group) => {
+      group.hidden = !config.trailEnabled;
+    });
+  };
+
+  ParticleSystem.syncParticleRepulsionSettingsVisibility = function syncParticleRepulsionSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    panel.querySelectorAll('[data-particle-repulsion-setting]').forEach((group) => {
+      group.hidden = !config.particleRepulsionEnabled;
+    });
+  };
+
+  ParticleSystem.syncSelfDriftSettingsVisibility = function syncSelfDriftSettingsVisibility() {
+    const panel = document.getElementById('settings-panel');
+    if (!panel) return;
+
+    panel.querySelectorAll('[data-self-drift-setting]').forEach((group) => {
+      group.hidden = !config.selfDriftEnabled;
     });
   };
 
@@ -443,8 +506,14 @@ window.ParticleSystem = window.ParticleSystem || {};
     ParticleSystem.syncDriftOrbitVisibility();
     ParticleSystem.syncDriftOrbitRepulsionVisibility();
     ParticleSystem.syncExplosionSettingsVisibility();
-    ParticleSystem.syncCursorTrailSettingsVisibility();
+    ParticleSystem.syncCursorInteractionSettingsVisibility();
     ParticleSystem.syncDepthSettingsVisibility();
+    ParticleSystem.syncBackgroundGradientSettingsVisibility();
+    ParticleSystem.syncAuroraSettingsVisibility();
+    ParticleSystem.syncConnectionSettingsVisibility();
+    ParticleSystem.syncTrailSettingsVisibility();
+    ParticleSystem.syncParticleRepulsionSettingsVisibility();
+    ParticleSystem.syncSelfDriftSettingsVisibility();
     ParticleSystem.syncVelocityStretchSettingsVisibility();
     ParticleSystem.syncPresetSelect();
     ParticleSystem.syncFpsIndicator();
@@ -473,8 +542,14 @@ window.ParticleSystem = window.ParticleSystem || {};
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitVisibility();
     if (key === 'selfDriftMode') ParticleSystem.syncDriftOrbitRepulsionVisibility();
     if (key === 'explosionEnabled' || key === 'explosionMode') ParticleSystem.syncExplosionSettingsVisibility();
-    if (key === 'cursorMode') ParticleSystem.syncCursorTrailSettingsVisibility();
+    if (key === 'cursorInteractionEnabled' || key === 'cursorMode') ParticleSystem.syncCursorInteractionSettingsVisibility();
     if (key === 'depthEnabled') ParticleSystem.syncDepthSettingsVisibility();
+    if (key === 'backgroundMode') ParticleSystem.syncBackgroundGradientSettingsVisibility();
+    if (key === 'auroraEnabled') ParticleSystem.syncAuroraSettingsVisibility();
+    if (key === 'showConnections') ParticleSystem.syncConnectionSettingsVisibility();
+    if (key === 'trailEnabled') ParticleSystem.syncTrailSettingsVisibility();
+    if (key === 'particleRepulsionEnabled') ParticleSystem.syncParticleRepulsionSettingsVisibility();
+    if (key === 'selfDriftEnabled') ParticleSystem.syncSelfDriftSettingsVisibility();
     if (key === 'velocityStretchEnabled') ParticleSystem.syncVelocityStretchSettingsVisibility();
     if (key === 'showFps' || key === 'showParticleCount') ParticleSystem.syncFpsIndicator();
     ParticleSystem.applySettings(key);

@@ -65,6 +65,120 @@ test('pointer trail honours density, master cursor toggle, and point cap', () =>
   assert.equal(ParticleSystem.pointerTrails.length, 120);
 });
 
+test('cursor interaction settings are hidden when interaction is off', () => {
+  const interactionGroups = [{ hidden: false }, { hidden: false }];
+  const trailGroups = [{ hidden: false }, { hidden: false }];
+  const modeGroups = [{ hidden: false }, { hidden: false }];
+  const panel = {
+    querySelectorAll: (selector) => {
+      if (selector === '[data-cursor-mode-setting]') return modeGroups;
+      if (selector === '[data-cursor-interaction-setting]') return interactionGroups;
+      if (selector === '[data-cursor-trail-setting]') return trailGroups;
+      return [];
+    },
+  };
+  const document = {
+    getElementById: (id) => (id === 'settings-panel' ? panel : null),
+  };
+
+  const settingsSource = fs.readFileSync(path.join(root, 'js', 'settings.js'), 'utf8');
+  const ParticleSystem = {
+    CONSTANTS: {
+      ATTR_SETTING: 'data-setting',
+      CSS_VISIBLE_CLASS: 'is-visible',
+      SELECTOR_TOGGLE_LABEL: '.toggle-label',
+      SELECTOR_CONTROL_GROUP: '.control-group',
+    },
+    config: { cursorInteractionEnabled: false, cursorMode: 'trail' },
+    DEFAULT_CONFIG: {},
+    SETTINGS_PRESETS: {},
+    getPerformanceLimits: () => ({}),
+    syncCursorMode: () => {},
+    updateParticleShadowBlur: () => {},
+    createParticles: () => {},
+    applyPerformanceProfile: () => {},
+    clampConfigToPerformanceProfile: () => {},
+    syncFpsIndicator: () => {},
+    saveSettings: () => {},
+    getSettingsControls: () => [],
+    clearRuntimeOverrides: () => {},
+    resetAdaptiveQualityState: () => {},
+    clearSavedSettings: () => {},
+    ADAPTIVE_QUALITY_ORDER: [],
+  };
+
+  const context = { window: { ParticleSystem }, document, console, navigator: {}, performance: { now: () => 0 }, requestAnimationFrame: (cb) => cb(), cancelAnimationFrame: () => {} };
+  context.window.window = context.window;
+  context.window.document = document;
+  vm.createContext(context);
+  vm.runInContext(settingsSource, context);
+
+  ParticleSystem.config.cursorInteractionEnabled = false;
+  ParticleSystem.syncCursorInteractionSettingsVisibility();
+  assert.equal(modeGroups.every((group) => group.hidden === true), true);
+  assert.equal(interactionGroups.every((group) => group.hidden === true), true);
+  assert.equal(trailGroups.every((group) => group.hidden === true), true);
+
+  ParticleSystem.config.cursorInteractionEnabled = true;
+  ParticleSystem.config.cursorMode = 'trail';
+  ParticleSystem.syncCursorInteractionSettingsVisibility();
+  assert.equal(modeGroups.every((group) => group.hidden === false), true);
+  assert.equal(interactionGroups.every((group) => group.hidden === true), true);
+  assert.equal(trailGroups.every((group) => group.hidden === false), true);
+
+  ParticleSystem.config.cursorMode = 'attract';
+  ParticleSystem.syncCursorInteractionSettingsVisibility();
+  assert.equal(modeGroups.every((group) => group.hidden === false), true);
+  assert.equal(interactionGroups.every((group) => group.hidden === false), true);
+  assert.equal(trailGroups.every((group) => group.hidden === true), true);
+});
+
+test('gradient intensity is hidden unless the background mode is gradient', () => {
+  const gradientGroups = [{ hidden: false }, { hidden: false }];
+  const panel = {
+    querySelectorAll: (selector) => {
+      if (selector === '[data-background-gradient-setting]') return gradientGroups;
+      return [];
+    },
+  };
+  const document = {
+    getElementById: (id) => (id === 'settings-panel' ? panel : null),
+  };
+
+  const settingsSource = fs.readFileSync(path.join(root, 'js', 'settings.js'), 'utf8');
+  const ParticleSystem = {
+    CONSTANTS: {
+      ATTR_SETTING: 'data-setting',
+      CSS_VISIBLE_CLASS: 'is-visible',
+      SELECTOR_TOGGLE_LABEL: '.toggle-label',
+      SELECTOR_CONTROL_GROUP: '.control-group',
+    },
+    config: { backgroundMode: 'solid' },
+    DEFAULT_CONFIG: {},
+    SETTINGS_PRESETS: {},
+    getPerformanceLimits: () => ({}),
+    applyPerformanceProfile: () => {},
+    clampConfigToPerformanceProfile: () => {},
+    syncFpsIndicator: () => {},
+    saveSettings: () => {},
+    getSettingsControls: () => [],
+    ADAPTIVE_QUALITY_ORDER: [],
+  };
+
+  const context = { window: { ParticleSystem }, document, console, navigator: {}, performance: { now: () => 0 }, requestAnimationFrame: (cb) => cb(), cancelAnimationFrame: () => {} };
+  context.window.window = context.window;
+  context.window.document = document;
+  vm.createContext(context);
+  vm.runInContext(settingsSource, context);
+
+  ParticleSystem.syncBackgroundGradientSettingsVisibility();
+  assert.equal(gradientGroups.every((group) => group.hidden === true), true);
+
+  ParticleSystem.config.backgroundMode = 'gradient';
+  ParticleSystem.syncBackgroundGradientSettingsVisibility();
+  assert.equal(gradientGroups.every((group) => group.hidden === false), true);
+});
+
 test('disabling cursor interaction clears the active pointer trail', () => {
   const context = { window: {}, performance: { now: () => 0 }, Date };
   context.window = context;
@@ -244,4 +358,82 @@ test('legacy scene links without trailColor load with the white default', () => 
   const settings = ParticleSystem.decodeScene(encoded);
 
   assert.equal(settings.trailColor, '#ffffff');
+});
+
+test('secondary settings hide when their master toggles are off', () => {
+  const trailGroups = [{ hidden: false }, { hidden: false }];
+  const auroraGroups = [{ hidden: false }, { hidden: false }];
+  const connectionGroups = [{ hidden: false }, { hidden: false }];
+
+  const panel = {
+    querySelectorAll: (selector) => {
+      if (selector === '[data-trail-setting]') return trailGroups;
+      if (selector === '[data-aurora-setting]') return auroraGroups;
+      if (selector === '[data-connection-setting]') return connectionGroups;
+      return [];
+    },
+  };
+
+  const document = {
+    getElementById: (id) => (id === 'settings-panel' ? panel : null),
+  };
+
+  const settingsSource = fs.readFileSync(path.join(root, 'js', 'settings.js'), 'utf8');
+  const ParticleSystem = {
+    CONSTANTS: {
+      ATTR_SETTING: 'data-setting',
+      CSS_VISIBLE_CLASS: 'is-visible',
+      SELECTOR_TOGGLE_LABEL: '.toggle-label',
+      SELECTOR_CONTROL_GROUP: '.control-group',
+    },
+    config: { trailEnabled: false, auroraEnabled: false, showConnections: false },
+    DEFAULT_CONFIG: {},
+    SETTINGS_PRESETS: {},
+    getPerformanceLimits: () => ({}),
+    syncCursorMode: () => {},
+    updateParticleShadowBlur: () => {},
+    createParticles: () => {},
+    applyPerformanceProfile: () => {},
+    clampConfigToPerformanceProfile: () => {},
+    syncFpsIndicator: () => {},
+    saveSettings: () => {},
+    getSettingsControls: () => [],
+    clearRuntimeOverrides: () => {},
+    resetAdaptiveQualityState: () => {},
+    clearSavedSettings: () => {},
+    ADAPTIVE_QUALITY_ORDER: [],
+  };
+
+  const context = {
+    window: { ParticleSystem },
+    document,
+    console,
+    navigator: {},
+    performance: { now: () => 0 },
+    requestAnimationFrame: (cb) => cb(),
+    cancelAnimationFrame: () => {},
+  };
+  context.window.window = context.window;
+  context.window.document = document;
+  vm.createContext(context);
+  vm.runInContext(settingsSource, context);
+
+  ParticleSystem.syncTrailSettingsVisibility();
+  ParticleSystem.syncAuroraSettingsVisibility();
+  ParticleSystem.syncConnectionSettingsVisibility();
+
+  assert.equal(trailGroups.every((group) => group.hidden === true), true);
+  assert.equal(auroraGroups.every((group) => group.hidden === true), true);
+  assert.equal(connectionGroups.every((group) => group.hidden === true), true);
+
+  ParticleSystem.config.trailEnabled = true;
+  ParticleSystem.config.auroraEnabled = true;
+  ParticleSystem.config.showConnections = true;
+  ParticleSystem.syncTrailSettingsVisibility();
+  ParticleSystem.syncAuroraSettingsVisibility();
+  ParticleSystem.syncConnectionSettingsVisibility();
+
+  assert.equal(trailGroups.every((group) => group.hidden === false), true);
+  assert.equal(auroraGroups.every((group) => group.hidden === false), true);
+  assert.equal(connectionGroups.every((group) => group.hidden === false), true);
 });

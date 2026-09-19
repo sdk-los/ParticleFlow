@@ -204,7 +204,7 @@
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-particle-repulsion-setting>
           <div class="control-label">
             <span>Сила отталкивания</span>
             <span class="control-value" data-display="particleRepulsionStrength">0.30</span>
@@ -212,7 +212,7 @@
           <input type="range" data-setting="particleRepulsionStrength" min="0" max="1.2" step="0.01" value="0.3">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-particle-repulsion-setting>
           <div class="control-label">
             <span>Радиус отталкивания</span>
             <span class="control-value" data-display="particleRepulsionRadius">36 px</span>
@@ -234,7 +234,7 @@
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-self-drift-setting>
           <div class="control-label">
             <span>Сила дрейфа</span>
             <button class="setting-help" type="button" data-tooltip="Насколько заметно само-дрейф меняет траекторию частиц. При значении 0 эффект не виден." aria-label="Что означает сила дрейфа?">?</button>
@@ -243,7 +243,7 @@
           <input type="range" data-setting="selfDriftIntensity" min="0" max="1" step="0.01" value="0.08">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-self-drift-setting>
           <div class="control-label">
             <span>Скорость дрейфа</span>
             <button class="setting-help" type="button" data-tooltip="Темп анимации само-дрейфа: больше значение — быстрее меняется направление и рисунок движения." aria-label="Что означает скорость дрейфа?">?</button>
@@ -252,7 +252,7 @@
           <input type="range" data-setting="selfDriftSpeed" min="0.1" max="3" step="0.1" value="0.5">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-self-drift-setting>
           <div class="control-label">
             <span>Режим дрейфа</span>
             <button class="setting-help" type="button" data-tooltip="Определяет траекторию автономного движения: поток, волна, орбита, вихрь и другие варианты." aria-label="Что такое режим дрейфа?">?</button>
@@ -278,7 +278,7 @@
           </select>
         </div>
 
-        <div class="control-group" data-drift-direction>
+        <div class="control-group" data-drift-direction data-self-drift-setting>
           <div class="control-label">
             <span>Направление (градусы)</span>
             <button class="setting-help" type="button" data-tooltip="Угол движения для режима «Направленный»: 0° — вправо, 90° — вниз, 180° — влево, 270° — вверх." aria-label="Как работает направление дрейфа?">?</button>
@@ -287,7 +287,7 @@
           <input type="range" data-setting="selfDriftDirection" min="0" max="360" value="0">
         </div>
 
-        <div class="control-group" data-drift-orbit>
+        <div class="control-group" data-drift-orbit data-self-drift-setting>
           <div class="control-label">
             <span>Радиус орбиты</span>
             <button class="setting-help" type="button" data-tooltip="Размер круговой траектории в орбитальных режимах. Процент считается относительно размера экрана." aria-label="Что означает радиус орбиты?">?</button>
@@ -296,7 +296,7 @@
           <input type="range" data-setting="selfDriftOrbitRadius" min="0" max="100" step="1" value="0">
         </div>
 
-        <div class="control-group" data-drift-orbit-repel>
+        <div class="control-group" data-drift-orbit-repel data-self-drift-setting>
           <div class="control-label">
             <span>Отталкивание между частицами</span>
             <button class="setting-help" type="button" data-tooltip="Сила, с которой частицы в общей орбите расходятся друг от друга, чтобы не собираться в одной точке." aria-label="Что означает отталкивание между частицами?">?</button>
@@ -305,7 +305,7 @@
           <input type="range" data-setting="selfDriftOrbitRepulsionStrength" min="0" max="1.2" step="0.01" value="0.35">
         </div>
 
-        <div class="control-group" data-drift-orbit-repel>
+        <div class="control-group" data-drift-orbit-repel data-self-drift-setting>
           <div class="control-label">
             <span>Включить отталкивание</span>
             <button class="setting-help" type="button" data-tooltip="Работает только в режиме «Орбита — общая» и использует заданную выше силу отталкивания." aria-label="Когда работает отталкивание?">?</button>
@@ -371,7 +371,7 @@
           <input type="range" data-setting="attractionRadius" min="50" max="500" value="200">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-cursor-mode-setting>
           <div class="control-label">
             <span>Режим курсора</span>
             <button class="setting-help" type="button" data-tooltip="Притяжение тянет частицы к курсору, отталкивание — от него, орбита закручивает вокруг него, а след оставляет дорожку частиц." aria-label="Что такое режим курсора?">?</button>
@@ -524,7 +524,7 @@
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-trail-setting>
           <div class="control-label">
             <span>Длина следа</span>
             <span class="control-value" data-display="trailLength">10</span>
@@ -532,7 +532,7 @@
           <input type="range" data-setting="trailLength" min="2" max="30" value="10">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-trail-setting>
           <div class="control-label">
             <span>Прозрачность следа</span>
             <span class="control-value" data-display="trailOpacity">0.30</span>
@@ -540,7 +540,7 @@
           <input type="range" data-setting="trailOpacity" min="0.05" max="1" step="0.05" value="0.3">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-trail-setting>
           <div class="control-label">
             <span>Цвет следа</span>
           </div>
@@ -626,6 +626,15 @@
           </label>
         </div>
 
+        <div class="control-group" data-background-gradient-setting>
+          <div class="control-label">
+            <span>Интенсивность градиента</span>
+            <button class="setting-help" type="button" data-tooltip="Контраст дополнительного цвета в градиентном фоне. При 0 фон выглядит почти сплошным." aria-label="Что означает интенсивность градиента?">?</button>
+            <span class="control-value" data-display="backgroundGradientStrength">0.35</span>
+          </div>
+          <input type="range" data-setting="backgroundGradientStrength" min="0" max="1" step="0.01" value="0.35">
+        </div>
+
         <div class="control-group">
           <div class="control-label">
             <span>Северное сияние</span>
@@ -640,7 +649,7 @@
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-aurora-setting>
           <div class="control-label">
             <span>Интенсивность сияния</span>
             <span class="control-value" data-display="auroraIntensity">0.30</span>
@@ -648,21 +657,12 @@
           <input type="range" data-setting="auroraIntensity" min="0" max="1" step="0.01" value="0.3">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-aurora-setting>
           <div class="control-label">
             <span>Скорость сияния</span>
             <span class="control-value" data-display="auroraSpeed">0.80</span>
           </div>
           <input type="range" data-setting="auroraSpeed" min="0.1" max="2" step="0.1" value="0.8">
-        </div>
-
-        <div class="control-group">
-          <div class="control-label">
-            <span>Интенсивность градиента</span>
-            <button class="setting-help" type="button" data-tooltip="Контраст дополнительного цвета в градиентном фоне. При 0 фон выглядит почти сплошным." aria-label="Что означает интенсивность градиента?">?</button>
-            <span class="control-value" data-display="backgroundGradientStrength">0.35</span>
-          </div>
-          <input type="range" data-setting="backgroundGradientStrength" min="0" max="1" step="0.01" value="0.35">
         </div>
       </div>
     </details>
@@ -846,7 +846,7 @@
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-connection-setting>
           <div class="control-label">
             <span>Дальность соединения</span>
             <button class="setting-help" type="button" data-tooltip="Максимальное расстояние между частицами, на котором между ними появляется линия." aria-label="Что означает дальность соединения?">?</button>
@@ -855,7 +855,7 @@
           <input type="range" data-setting="connectionDistance" min="30" max="300" value="120">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-connection-setting>
           <div class="control-label">
             <span>Толщина линии</span>
             <span class="control-value" data-display="connectionWidth">1.0</span>
@@ -863,7 +863,7 @@
           <input type="range" data-setting="connectionWidth" min="0.2" max="5" step="0.1" value="1.0">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-connection-setting>
           <div class="control-label">
             <span>Прозрачность линий</span>
             <span class="control-value" data-display="connectionOpacity">0.30</span>
@@ -871,7 +871,7 @@
           <input type="range" data-setting="connectionOpacity" min="0" max="1" step="0.01" value="0.3">
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-connection-setting>
           <div class="control-label">
             <span>Цвет линий</span>
           </div>
