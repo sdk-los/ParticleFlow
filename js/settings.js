@@ -591,18 +591,23 @@ window.ParticleSystem = window.ParticleSystem || {};
     const preset = SETTINGS_PRESETS[presetKey];
     if (!preset) return;
 
-    const performanceProfile = config.performanceProfile;
+    const optimizationSettings = {
+      performanceProfile: config.performanceProfile,
+      adaptiveQualityEnabled: config.adaptiveQualityEnabled,
+      prioritizeLastChangedSetting: config.prioritizeLastChangedSetting,
+    };
+
     Object.assign(config, preset.settings);
-    config.performanceProfile = performanceProfile;
+    Object.assign(config, optimizationSettings);
     ParticleSystem.clearRuntimeOverrides();
     ParticleSystem.resetAdaptiveQualityState();
     ParticleSystem.clampConfigToPerformanceProfile();
-    
+
     // Разрешаем конфликты между shadowBlur и trailEnabled
     if (config.shadowBlur > 0 && config.trailEnabled) {
       config.trailEnabled = false;
     }
-    
+
     ParticleSystem.syncControlsFromConfig();
     ParticleSystem.syncCursorMode();
     ParticleSystem.createParticles();
