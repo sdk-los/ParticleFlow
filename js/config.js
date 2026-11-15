@@ -617,6 +617,20 @@ window.ParticleSystem = window.ParticleSystem || {};
       trailEnabled: false,
       trailLength: 12,
     }),
+    neonVector: createPreset('Neon Vector', {
+      particleCount: 500,
+      velocityStretchStrength: 1.35,
+      particleRepulsionEnabled: true,
+      particleRepulsionStrength: 1.01,
+      particleRepulsionRadius: 32,
+      selfDriftEnabled: true,
+      selfDriftMode: 'directional',
+      selfDriftDirection: 52,
+      colorPalette: 'neon',
+      depthStrength: 0.89,
+      parallaxStrength: 81,
+      bounce: false,
+    }),
   });
 
   ParticleSystem.userConfig = { ...ParticleSystem.DEFAULT_CONFIG };

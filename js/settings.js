@@ -569,7 +569,7 @@ window.ParticleSystem = window.ParticleSystem || {};
   };
 
   ParticleSystem.copySceneLink = async function copySceneLink() {
-    const status = document.getElementById('scene-link-status');
+    const status = document.getElementById('scene-copy-status');
     const sceneUrl = ParticleSystem.getSceneUrl();
     if (!sceneUrl) {
       if (status) status.textContent = 'Не удалось подготовить ссылку.';
@@ -584,6 +584,21 @@ window.ParticleSystem = window.ParticleSystem || {};
       if (status) status.textContent = 'Ссылка скопирована.';
     } catch (error) {
       if (status) status.textContent = 'Не удалось скопировать ссылку. Скопируйте адрес из браузера.';
+    }
+  };
+
+  ParticleSystem.copySceneJson = async function copySceneJson() {
+    const status = document.getElementById('scene-copy-status');
+    const sceneJson = JSON.stringify(ParticleSystem.getSerializableConfig(), null, 2);
+
+    try {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        throw new Error('Clipboard API is unavailable');
+      }
+      await navigator.clipboard.writeText(sceneJson);
+      if (status) status.textContent = 'JSON сцены скопирован.';
+    } catch (error) {
+      if (status) status.textContent = 'Не удалось скопировать JSON сцены.';
     }
   };
 

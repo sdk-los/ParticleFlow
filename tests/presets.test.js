@@ -35,7 +35,7 @@ function loadPresets() {
 
 test('new presets are selectable and reset all configuration keys', () => {
   const { DEFAULT_CONFIG, SETTINGS_PRESETS } = loadPresets();
-  const newPresetKeys = ['constellation', 'comet', 'aurora', 'fireworks', 'nebula', 'emberfall', 'sakura', 'tidal', 'voltage', 'prismRush', 'monsoon', 'deepCurrent'];
+  const newPresetKeys = ['constellation', 'comet', 'aurora', 'fireworks', 'nebula', 'emberfall', 'sakura', 'tidal', 'voltage', 'prismRush', 'monsoon', 'deepCurrent', 'neonVector'];
 
   newPresetKeys.forEach((key) => {
     assert.match(indexHtml, new RegExp(`<option value="${key}">`));
@@ -44,7 +44,7 @@ test('new presets are selectable and reset all configuration keys', () => {
 });
 
 test('new presets keep conflicting or compounding expensive effects apart', () => {
-  const { SETTINGS_PRESETS } = loadPresets();
+  const { DEFAULT_CONFIG, SETTINGS_PRESETS } = loadPresets();
   const { constellation, comet, aurora, fireworks, nebula, emberfall, sakura, tidal, voltage, prismRush, monsoon, deepCurrent } = SETTINGS_PRESETS;
 
   assert.equal(constellation.settings.shadowBlur, 0);
@@ -102,6 +102,22 @@ test('new presets keep conflicting or compounding expensive effects apart', () =
   assert.equal(deepCurrent.settings.trailEnabled, false);
   assert.equal(deepCurrent.settings.particleRepulsionEnabled, true);
   assert.equal(deepCurrent.settings.bloom, 0.6);
+  const expectedNeonVector = {
+    ...DEFAULT_CONFIG,
+    particleCount: 500,
+    velocityStretchStrength: 1.35,
+    particleRepulsionEnabled: true,
+    particleRepulsionStrength: 1.01,
+    particleRepulsionRadius: 32,
+    selfDriftEnabled: true,
+    selfDriftMode: 'directional',
+    selfDriftDirection: 52,
+    colorPalette: 'neon',
+    depthStrength: 0.89,
+    parallaxStrength: 81,
+    bounce: false,
+  };
+  assert.deepEqual(JSON.parse(JSON.stringify(SETTINGS_PRESETS.neonVector.settings)), expectedNeonVector);
   assert.equal(SETTINGS_PRESETS.bloom.settings.bloom, 0.9);
 });
 

@@ -70,12 +70,14 @@ window.ParticleSystem = window.ParticleSystem || {};
     const settingsClose = document.getElementById('settings-close');
     const settingsReset = document.getElementById('settings-reset');
     const copySceneLink = document.getElementById('copy-scene-link');
+    const copySceneJson = document.getElementById('copy-scene-json');
     const settingsOverlay = document.getElementById('settings-overlay');
 
     settingsToggle.addEventListener('click', ParticleSystem.toggleSettings);
     settingsClose.addEventListener('click', ParticleSystem.closeSettings);
     settingsReset.addEventListener('click', ParticleSystem.resetSettings);
     if (copySceneLink) copySceneLink.addEventListener('click', ParticleSystem.copySceneLink);
+    if (copySceneJson) copySceneJson.addEventListener('click', ParticleSystem.copySceneJson);
     settingsOverlay.addEventListener('click', ParticleSystem.closeSettings);
     document.addEventListener('keydown', (e) => {
       const panel = document.getElementById('settings-panel');

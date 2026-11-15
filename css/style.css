@@ -88,6 +88,7 @@
     #settings-close:focus-visible,
     #settings-reset:focus-visible,
     #copy-scene-link:focus-visible,
+    #copy-scene-json:focus-visible,
     .github-link:focus-visible,
     .select-control:focus-visible,
     input[type="range"]:focus-visible,
@@ -565,7 +566,8 @@
     }
 
     #settings-reset,
-    #copy-scene-link {
+    #copy-scene-link,
+    #copy-scene-json {
       width: 100%;
       min-height: 40px;
       border: 1px solid rgba(10, 207, 131, 0.35);
@@ -579,17 +581,19 @@
     }
 
     #settings-reset:hover,
-    #copy-scene-link:hover {
+    #copy-scene-link:hover,
+    #copy-scene-json:hover {
       border-color: rgba(10, 207, 131, 0.65);
       background: rgba(10, 207, 131, 0.15);
       color: #7dffc9;
     }
 
-    #settings-reset {
+    #settings-reset,
+    #copy-scene-json {
       margin-top: 8px;
     }
 
-    .scene-link-status {
+    .scene-copy-status {
       display: block;
       min-height: 18px;
       margin-top: 6px;
